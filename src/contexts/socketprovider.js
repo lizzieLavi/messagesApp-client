@@ -16,7 +16,7 @@ export function SocketProvider({ userId, children }) {
   {
 
     async function fetchData() {
-    socket.current = io("ws://localhost:5000");
+    socket.current = io("ws://https://messagesapp1.herokuapp.com/");
     }
     fetchData()
 
