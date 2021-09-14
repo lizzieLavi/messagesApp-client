@@ -68,9 +68,10 @@ export default function LogIn(props) {
 
              <div>
   
-            <button className="btn submits sign-up"><Link className='defaultLink' to={`/Register`}>Sign Up</Link>
-            <i class="fa fa-user-plus" aria-hidden="true"></i>
-            </button>
+    
+           
+               <Link  className="submits sign-up defaultLink" to={`/Register`}>     Sign Up<i style={{margin:'7px'}}class="fa fa-user-plus" aria-hidden="true"/></Link>
+      
             </div>
            {Error}
           </div>

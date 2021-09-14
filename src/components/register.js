@@ -2,6 +2,7 @@ import {useState} from 'react'
 import '../css/login.css'
 import axios from 'axios'
 import {Link,useHistory} from 'react-router-dom'
+import 'font-awesome/css/font-awesome.min.css';
 
  
 
@@ -95,10 +96,8 @@ function Register(props) {
         </div>
 
         <div>
-
-       <button className="btn submits sign-up"><Link className='defaultLink' to={`/`}>back to Log In</Link>
-       <i class="fa fa-user-plus" aria-hidden="true"></i>
-       </button>
+        <Link  className="submits sign-up defaultLink" to={`/`}>    <i style={{margin:'7px'}}class="fa fa-user-plus" aria-hidden="true"/>back to Log In</Link>
+   
        </div>
      </div>
 
@@ -107,17 +106,6 @@ function Register(props) {
   
     )
 
-    /*      <div className="LogInPage">
-             <form onSubmit={handleSubmit} className='logInBorder'>
-             enter your phone:  
-              <input type='text' onChange={(e)=> setPhone(e.target.value)}/> 
-              enter your name: 
-              <input type='text' onChange={(e)=> setName(e.target.value)}/>  
-              
-              <input type="file" onChange={handleFileUpload} />
-                <button type='submit'> Sign Up</button>
-            </form>     
-        </div>*/
 
 }
 
