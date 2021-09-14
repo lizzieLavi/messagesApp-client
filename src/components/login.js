@@ -2,6 +2,7 @@ import React,{useState} from 'react'
 import '../css/login.css'
 import axios from 'axios'
 import {Link,useHistory} from 'react-router-dom'
+import 'font-awesome/css/font-awesome.min.css';
 
 
 
