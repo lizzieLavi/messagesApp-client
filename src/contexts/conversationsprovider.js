@@ -59,7 +59,7 @@ export function ConversationsProvider({ id, children }) {
       }
       else
       {
-        let response = await axios.get("http://localhost:5000/api/logIn/"+ selectedConversation.Participants[0].id,config)
+        let response = await axios.get("https://messagesapp1.herokuapp.com/api/logIn/"+ selectedConversation.Participants[0].id,config)
         setCurrentConversationIsConnected(response.data.LastSeen)
       }
      }
@@ -81,7 +81,7 @@ export function ConversationsProvider({ id, children }) {
   async function getConversations()
   {
     try{
-       let response = await axios.get("http://localhost:5000/api/conversations/UserConversations/" +sessionStorage["id"],config);
+       let response = await axios.get("https://messagesapp1.herokuapp.com/api/conversations/UserConversations/" +sessionStorage["id"],config);
 
        let ConversationsList = response.data.map((conversation) =>
        {
@@ -193,7 +193,7 @@ export function ConversationsProvider({ id, children }) {
       //updateDB
       try {
         let Response = await axios.post(
-          "http://localhost:5000/api/conversations",
+          "https://messagesapp1.herokuapp.com/api/conversations",
           newConversation,
           config
         );

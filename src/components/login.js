@@ -22,7 +22,7 @@ export default function LogIn(props) {
         setError('')
         e.preventDefault()
         let obj = {name: UserName,phone: phone}
-        let response = await axios.post("http://localhost:5000/api/logIn",obj)
+        let response = await axios.post("https://messagesapp1.herokuapp.com/api/logIn",obj)
 
         if(response.data !== "not found")
         {

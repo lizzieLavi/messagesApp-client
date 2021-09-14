@@ -37,7 +37,7 @@ function Register(props) {
 
 
        try{
-            const response = await axios.post("http://localhost:5000/api/logIn/Register",obj)
+            const response = await axios.post("https://messagesapp1.herokuapp.com/api/logIn/Register",obj)
    
             sessionStorage['config']= response.data.token 
             sessionStorage['id'] = response.data.User._id

@@ -27,7 +27,7 @@ export  function UserProvider({ children })
 
    async function getContacts()
    {
-    const response = await axios.get("http://localhost:5000/api/logIn/"+sessionStorage['id'],config);
+    const response = await axios.get("https://messagesapp1.herokuapp.com/api/logIn/"+sessionStorage['id'],config);
     setInfo({id:response.data._id,name:response.data.name,phone:response.data.phone,imageName:response.data.imageName,LastSeen:response.data.LastSeen})
     return(response.data.contacts)
 
@@ -63,7 +63,7 @@ export  function UserProvider({ children })
 
     try{ 
 
-      const response= await axios.get("http://localhost:5000/api/logIn/getByPhone/" + phone,config)
+      const response= await axios.get("https://messagesapp1.herokuapp.com/api/logIn/getByPhone/" + phone,config)
 
       if(response !== 'no such user')
       {
@@ -72,7 +72,7 @@ export  function UserProvider({ children })
        setContacts(newContacts)
        let UpdatedUser={...info,contacts:newContacts}
        try{
-         await axios.put("http://localhost:5000/api/logIn/" + sessionStorage['id'],UpdatedUser,{'headers': {'x-access-token':sessionStorage['config']}})
+         await axios.put("https://messagesapp1.herokuapp.com/api/logIn/" + sessionStorage['id'],UpdatedUser,{'headers': {'x-access-token':sessionStorage['config']}})
        } catch(err){console.log(err)}
       }
       else console.log('user dosent exist')
