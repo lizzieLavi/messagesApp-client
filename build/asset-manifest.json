@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/static/css/main.7e4cd9cc.chunk.css",
+    "main.css": "/static/css/main.b1e4df5d.chunk.css",
     "main.js": "/static/js/main.f2e7ed1a.chunk.js",
     "main.js.map": "/static/js/main.f2e7ed1a.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.6a8a0925.js",
@@ -10,7 +10,7 @@
     "static/js/2.e38515f4.chunk.js.map": "/static/js/2.e38515f4.chunk.js.map",
     "index.html": "/index.html",
     "static/css/2.f78674c2.chunk.css.map": "/static/css/2.f78674c2.chunk.css.map",
-    "static/css/main.7e4cd9cc.chunk.css.map": "/static/css/main.7e4cd9cc.chunk.css.map",
+    "static/css/main.b1e4df5d.chunk.css.map": "/static/css/main.b1e4df5d.chunk.css.map",
     "static/js/2.e38515f4.chunk.js.LICENSE.txt": "/static/js/2.e38515f4.chunk.js.LICENSE.txt",
     "static/media/chat.css": "/static/media/chatbackground2.5511d1d2.jpg",
     "static/media/font-awesome.min.css": "/static/media/fontawesome-webfont.f691f37e.woff"
@@ -19,7 +19,7 @@
     "static/js/runtime-main.6a8a0925.js",
     "static/css/2.f78674c2.chunk.css",
     "static/js/2.e38515f4.chunk.js",
-    "static/css/main.7e4cd9cc.chunk.css",
+    "static/css/main.b1e4df5d.chunk.css",
     "static/js/main.f2e7ed1a.chunk.js"
   ]
 }

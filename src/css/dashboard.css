@@ -4,7 +4,7 @@
     display: grid;
     place-items: center;
     height: 100vh;
-    background-color: #CED2D5;
+    background-image: linear-gradient(to top,#c8c4c1 0%, #CED2D5 100%);
 }
 
 .dashboard_body
