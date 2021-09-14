@@ -43,7 +43,7 @@ export default function LogIn(props) {
     return (
        
         <div class="overlay">
-             <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"></link>
+        
           <form className='login_form' onSubmit={handleSubmit}>
             <div class="con">
               <header class="head-form">
