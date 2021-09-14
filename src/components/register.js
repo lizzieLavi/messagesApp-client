@@ -24,6 +24,7 @@ function Register(props) {
         data.append('file',Picture)
         data.append("upload_preset","whatsApp_clone")
         data.append("cloud_name","dsrgpqnyv")
+        data.append({secure:true})
         try{
         let response = await axios.post("https://api.cloudinary.com/v1_1/dsrgpqnyv/image/upload",data)
         picturePath =response.data.url
