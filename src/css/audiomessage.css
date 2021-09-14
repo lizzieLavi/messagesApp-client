@@ -1,0 +1,51 @@
+
+audio{
+    width: 250px;
+    height: 45px;
+    border-radius: 0px;
+    box-shadow: none;
+   
+}
+
+
+ .sender audio::-webkit-media-controls-panel  {
+  background-color: #CED2D5;
+
+  border-color: #CED2D5;
+}
+
+.reciever  audio::-webkit-media-controls-panel  {
+    background-color: #90B8B8;
+
+  }
+
+  audio::-webkit-media-controls-enclosure
+  {
+    
+  }
+
+audio::-webkit-media-controls-current-time-display,audio::-webkit-media-controls-time-remaining-display ,
+audio::-webkit-media-controls-mute-button,audio::-webkit-media-controls-volume-slider-container,
+audio::-webkit-media-controls-volume-slider,audio::-webkit-media-controls-volume-slider-container:hover
+{
+    display: none;
+    width:0px;
+}
+
+audio::-webkit-media-controls-volume-slider:hover{
+    display:none;
+}
+
+
+
+
+.audio_and_time
+{
+    display: flex;
+    flex-direction: column;
+}
+.message_with_audio
+{
+    display: flex;
+    align-items: center;
+}

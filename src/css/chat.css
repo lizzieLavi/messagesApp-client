@@ -1,0 +1,176 @@
+.chat{
+    display:flex;
+    flex-direction: column;
+    flex: 0.65;
+}
+
+.chat_header
+{
+    padding: 17px;
+    display:flex;
+    align-items: center;
+    border-bottom: 1px solid #8C8C8C;
+}
+
+.chat_header_info
+{
+    padding-left: 20px;
+    flex: 1;
+}
+
+.circle {
+    background: green;
+    border-radius: 50%;
+    width: 8px;
+    height: 8px;
+    padding:5px;
+    margin-right:5px;
+}
+
+.connected
+{
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    color: gray;
+   margin-top: 5px;
+}
+
+.lastSeen
+{
+    color: gray;
+   margin-top: 5px;
+}
+
+.chat_header_info > h2
+{
+   margin-left: 2px;
+}
+
+.chat_body
+{
+    flex: 1;
+    background: url('../images/chatbackground2.jpg')
+    no-repeat center center/cover;
+    border-radius: 5px;
+    padding:30px;
+    overflow-y: overlay;
+}
+
+.chat_message
+{
+    position: relative;
+    padding:8px;
+    width:fit-content;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    background-color: #CED2D5;
+}
+
+.sender_name
+{  
+    color: black;
+    position: absolute;
+    top:5px;
+    font-weight: 700;
+    font-size: 12px; 
+}
+
+.message_content
+{
+    padding:10px;
+    padding-bottom: 3px;
+
+}
+
+.message_time_and_content
+{
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    
+
+}
+
+.message_time
+{
+    color: gray;
+    font-size: 11px;
+}
+
+.chat_reciever
+{
+  margin-left: auto;
+  background-color: #90B8B8;
+
+}
+
+.chat_footer
+{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 62px;
+    border-top: 1px solid #8C8C8C;
+
+}
+
+.message_section
+{
+   flex:1;
+   display:flex;
+}
+
+.chat_footer > form > .message_input
+{
+    flex:1;
+    border-radius: 30px;
+    padding:10px;
+    border:none;
+    outline: none;
+}
+
+
+.chat_footer > form > button
+{
+    display: none;
+}
+.chat_footer_with_stickers
+{
+    display: flex;
+    flex-direction: column;
+
+}
+
+.body_and_footer
+{
+    display: flex;
+    flex-direction: column;
+    height: 78vh;
+    
+}
+
+.invisibleInput
+{
+    height: 0px;
+    width: 0px;
+}
+
+.image_in_message
+{
+    padding-top: 20px;
+
+}
+
+.section::-webkit-scrollbar {
+    width: 10px;
+}
+
+
+
+
+
+
+
+
