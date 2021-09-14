@@ -27,7 +27,7 @@ function Register(props) {
         data.append("cloud_name","dsrgpqnyv")
        
         try{
-        let response = await axios.post("https://api.cloudinary.com/v1_1/dsrgpqnyv/image/upload",{secure:true},data)
+        let response = await axios.post("https://api.cloudinary.com/v1_1/dsrgpqnyv/image/upload",data)
         picturePath =response.data.url
         }catch(err){console.log(err)}
 
