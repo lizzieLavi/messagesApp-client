@@ -6,12 +6,12 @@ import '../css/conversations.css'
 
 export default function Contacts({newConversationCallback,openModalCallback}) {
   const { contacts } = useUser()
-  const { createConversation,setCreateGroupFlag} = useConversations()
+  const { createConversation} = useConversations()
 
   function startConversation({id,name,image}) 
   {
     let ids=[id]
-    createConversation(ids,name,image)
+    createConversation(ids,name,image,false)
     newConversationCallback()
   }
 

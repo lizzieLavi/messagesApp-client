@@ -30,6 +30,7 @@ function ChatBody(props) {
     const [recordFlag,setRecordFlag] =useState(false)
     const {status,startRecording,stopRecording,mediaBlobUrl,clearBlobUrl} = useReactMediaRecorder({audio: true })
     const [audioBlob,setAudioBlob] = useState(null)
+    let chatWidth='chat_body'
 
 
     const setRef = useCallback((node) => 
@@ -144,7 +145,10 @@ function ChatBody(props) {
     return(
 
       <div className= 'body_and_footer'>
-        <div className='chat_body'>
+     
+ <div className='chat_body'>
+      
+      
         {selectedConversation.Messages.map((message,index)=>
          {
             const lastMessage = selectedConversation.Messages.length -1 === index

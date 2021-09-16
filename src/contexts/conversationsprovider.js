@@ -17,7 +17,6 @@ export function ConversationsProvider({ id, children }) {
   const [selectedConversation, setSelectedConversation] = useState();
   const RefConversations = useRef(conversations);
   const currentConversationRef = useRef(selectedConversation);
-  const [createGroupFlag, setCreateGroupFlag] = useState(false);
   const { socket, ConnectedUsers } = useSocket();
   const [typingFlag,setTypingFlag] =useState('')
   const [currentConversationIsConnected,setCurrentConversationIsConnected] = useState('')
@@ -122,19 +121,21 @@ export function ConversationsProvider({ id, children }) {
         
 
 
-  async function createConversation(ids, name, image) {
+  async function createConversation(ids, name, image,groupFlag) {
     let ConversationImage = image;
-    let isGroup = false;
+    let isGroup = groupFlag;
+
+    console.log(isGroup)
+
 
     //no participants chosen
     if (ids.length === 0) {
-      console.log("no participants choosen");
-      return;
+      return {status:'error',message:'no participants choosen'};
     }
 
-    //check if conversation already exists
+    //check if conversation already exists and it's not a group
     let ConversationExists = null;
-    if (ids.length === 1) {
+    if (ids.length === 1 && !isGroup) {
       ConversationExists = conversations.find(
         (conversation) => conversation.Name === name
       );
@@ -163,8 +164,27 @@ export function ConversationsProvider({ id, children }) {
         LastSeen: info.LastSeen
       });
 
+      let createdDate=''
+
       //if group
-      if (ids.length > 1) {
+      
+      if (isGroup) {
+
+        let parts = new Intl.DateTimeFormat('en', {
+          hc: 'h12',
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: 'numeric',
+          minute: 'numeric',
+          timeZone:'Asia/Jerusalem'})
+        .formatToParts(new Date())
+        .reduce((acc, part) => {
+          acc[part.type] = part.value;
+          return acc;
+        }, Object.create(null));
+    
+        createdDate= `${parts.day}/${parts.month}/${parts.year} ${parts.hour}:${parts.minute}`;
         const data = new FormData()
         data.append('file',ConversationImage)
         data.append("upload_preset","whatsApp_clone")
@@ -175,11 +195,9 @@ export function ConversationsProvider({ id, children }) {
 
         }catch(err){console.log(err)}
    
-      
-    
-        isGroup = true;
       }
-
+    
+      console.log(isGroup)
       let newConversation = {
         Name: name,
         creatorId: sessionStorage["id"],
@@ -187,7 +205,8 @@ export function ConversationsProvider({ id, children }) {
         Messages: [],
         LastMessage: { id: "", sender: "", message: "" },
         ConversationImage: ConversationImage,
-        isGroup,
+        isGroup:isGroup,
+        createdDate:createdDate
       };
 
       //updateDB
@@ -197,8 +216,8 @@ export function ConversationsProvider({ id, children }) {
           newConversation,
           config
         );
+
         if (Response.data.status === "created") {
-          console.log(Response.data.conversation);
           setSelectedConversation(Response.data.conversation);
 
           //show conversation only if messages sent
@@ -336,8 +355,6 @@ export function ConversationsProvider({ id, children }) {
   return (
     <ConversationsContext.Provider
       value={{
-        createGroupFlag,
-        setCreateGroupFlag,
         sendMessage,
         conversations,
         createConversation,

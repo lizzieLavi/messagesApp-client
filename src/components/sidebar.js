@@ -24,6 +24,7 @@ export default function SideBar({id}) {
     const [searchFlag,setSearchFlag] =useState(false)
     const {getSearchConverastions} = useConversations()
     const [choosenModal,setChoosenModal] =useState('')
+    
 
     
     function handleChange(e)

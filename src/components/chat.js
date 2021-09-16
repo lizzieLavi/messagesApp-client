@@ -2,15 +2,18 @@ import '../css/chat.css'
 import React from 'react'
 import { useState} from 'react'
 import { useConversations } from '../contexts/conversationsprovider';
-import { Avatar } from '@material-ui/core'
+import { Avatar ,IconButton} from '@material-ui/core'
 import ChatBody from './chatbody';
 import SendImageBody from './sendimagebody';
+import CloseIcon from '@material-ui/icons/Close';
+
 
 export default function Chat() {
 
     const {selectedConversation,currentConversationIsConnected,typingFlag,setTypingFlag} = useConversations()
     const [imageFlag,setImageFlag] =useState(false)
     const [imageURL,setImageURL] =useState(false)
+    const [showDetails,setShowDetails] =useState(false)
 
     const groupheader = () =>
     {
@@ -73,18 +76,54 @@ export default function Chat() {
 
     }
 
+    const chatSide=
+    <div>
+       <div className='chat_header' onClick={()=>setShowDetails(true)}>
+         <Avatar src={selectedConversation.ConversationImage}/>
+         <div className='chat_header_info'>
+            <h2> {selectedConversation.Name} </h2> 
+            {selectedConversation.isGroup?  groupheader() : privateConversationHeader()}
+         </div>
+       </div>
+
+       {imageFlag?   <SendImageBody imageURL={imageURL} backToChat={backToChatCallback}/>:<ChatBody imageCallback={chatBodyCallback}/>} 
+   </div>
+
     return (
-        <div className='chat'>
-            <div className='chat_header'>
-                <Avatar src={selectedConversation.ConversationImage}/>
-                <div className='chat_header_info'>
-                   <h2> {selectedConversation.Name} </h2> 
-                   {selectedConversation.isGroup?  groupheader() : privateConversationHeader()}
-               </div>
+       
+          showDetails? <div className='chat_with_details'>
+            <div className='chat narrow_chat'>
+            {chatSide}
             </div>
 
-            {imageFlag?   <SendImageBody imageURL={imageURL} backToChat={backToChatCallback}/>:<ChatBody imageCallback={chatBodyCallback}/>}  
+            <div className='chat_details'>
+            <div className='chat_details_top'>
+              <IconButton onClick={()=>setShowDetails(false)}>
+                 <CloseIcon fontSize='large'  />
+              </IconButton>
+              <h2 style={{paddingLeft:'10px'}}>{selectedConversation.isGroup? 'Group Details:' : 'Contact Details:' }</h2>
+            </div>
 
-        </div>
+
+            <span className='chat_details_body'>
+
+            <div className='user_info'>
+              <Avatar src={selectedConversation.ConversationImage} style={{height:'140px',width:'140px'}}/>
+              {!selectedConversation.isGroup?
+              <span className='name_and_lastSeen'>
+                 <h2>{selectedConversation.Name}</h2>
+                 <span>{privateConversationHeader()}</span>
+              </span>
+              : ''}
+            </div>
+
+            </span>
+
+            </div>
+             
+          </div>:
+          <div className='chat'>
+              {chatSide}
+          </div>
     )
 }

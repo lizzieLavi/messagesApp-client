@@ -13,6 +13,7 @@ export  function UserProvider({ children })
   const [info,setInfo] =useState({})
   const config= {'headers': {'x-access-token':sessionStorage['config']}}
 
+
   
    useEffect( () =>
    {
@@ -47,25 +48,25 @@ export  function UserProvider({ children })
   const createContact = async(phone) =>
   {
 
+
+
     if(phone === info.phone)
     {
-      console.log('cant Add yourself')
-       return;
+       return {status:'error',message:'cant Add yourself'};
     }
 
     let checkIfExists = contacts.filter(contact=> contact.phone === phone)
 
     if(checkIfExists.length !== 0)
     {
-      console.log('already exists')
-      return;
+      return {status:'error',message:'already exists'};
     }
 
     try{ 
 
       const response= await axios.get("https://messagesapp1.herokuapp.com/api/logIn/getByPhone/" + phone,config)
-
-      if(response !== 'no such user')
+      console.log(response)
+      if(response.data !== 'no such user')
       {
        const contact = {id:response.data._id,phone:response.data.phone,name:response.data.name,imageName:response.data.imageName}
        let newContacts = [...contacts,contact]
@@ -75,9 +76,11 @@ export  function UserProvider({ children })
          await axios.put("https://messagesapp1.herokuapp.com/api/logIn/" + sessionStorage['id'],UpdatedUser,{'headers': {'x-access-token':sessionStorage['config']}})
        } catch(err){console.log(err)}
       }
-      else console.log('user dosent exist')
+      else return {status:'error',message:'user doesnt exist'};
      
     } catch(err){console.log(err)}
+
+    return {status:'ok'}
   }
 
 

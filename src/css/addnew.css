@@ -12,32 +12,20 @@
 
 .add_new_group_border
 {
-    height: 45vh;
-    width: 40vw;
+    height: 50vh;
+    width: 25vw;
     background-color: #90B8B8;
     border: 1px solid black;
     
     display: flex;
 
 
-}
-.add_new_chat_border
-{
-    height: 45vh;
-    width: 35vw;
-    background-color: #90B8B8;
-    border: 1px solid black;
-    
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    overflow-y:overlay;
 }
 
 
 .add_new_contact_border
 {
-    height: 20vh;
+    height: 22vh;
     width: 50vw;
     background-color:#90B8B8;
     border: 1px solid black;
@@ -63,6 +51,7 @@
 .close_add_new
 {
     display: flex;
+    padding: 10px;
 }
 
 .add_contact_title
@@ -84,7 +73,7 @@
 }
 .enter_phone
 {
-    color:#999999;
+    color:#fcfcfc;
     margin:10px;
     font-weight: 400;
     font-size: 15px;
@@ -162,7 +151,7 @@
     display: flex;
     flex-direction: row;
     padding: 5px;
-    margin: 5px;
+    margin: 15px;
     align-items: center;
 }
 
@@ -220,6 +209,39 @@
 {
     opacity: 1;
 }
+
+.show_error
+{
+    color:#fcfcfc;
+    text-align: center;
+    padding:10px;
+    margin-bottom: 10px;
+    font-size: 15px;
+}
+
+.contact_item
+{
+    display: flex;
+    flex-direction: row ;
+    align-items: center;
+    border-bottom: 1px solid #3e403f;
+}
+
+input[type="checkbox" i]:checked + label {
+    background: #a3cece;
+
+}
+
+input[type="checkbox"]
+{
+    display: none
+}
+
+label{
+    cursor: pointer;
+}
+
+
 
 
 
