@@ -140,7 +140,7 @@ export default function Chat() {
       let message={name:"manager",message: sessionStorage['name'] +" changed group Description",timeSent:'',containsImage:false,containsRecord:false,recordURL:null}
       let messages=selectedConversation.Messages
       messages.push(message)
-      let updatedConversation={...selectedConversation,description:Description,Messages:messages,LastMasage:message}
+      let updatedConversation={...selectedConversation,description:Description,Messages:messages,LastMessage:message}
       UpdateConversation(updatedConversation)
       setEditGroupDescriptionGlag(false)
 
