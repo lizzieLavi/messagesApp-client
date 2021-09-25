@@ -45,17 +45,15 @@ export  function UserProvider({ children })
   }
 
 
-  const createContact = async(phone) =>
+  const createContact = async(name) =>
   {
-
-
-
-    if(phone === info.phone)
+    
+    if(name === info.name)
     {
        return {status:'error',message:'cant Add yourself'};
     }
 
-    let checkIfExists = contacts.filter(contact=> contact.phone === phone)
+    let checkIfExists = contacts.filter(contact=> contact.name === name)
 
     if(checkIfExists.length !== 0)
     {
@@ -64,7 +62,7 @@ export  function UserProvider({ children })
 
     try{ 
 
-      const response= await axios.get("https://messagesapp1.herokuapp.com/api/logIn/getByPhone/" + phone,config)
+      const response= await axios.get("https://messagesapp1.herokuapp.com/api/logIn/getByName/" + name,config)
       if(response.data !== 'no such user')
       {
        const contact = {id:response.data._id,phone:response.data.phone,name:response.data.name,imageName:response.data.imageName}

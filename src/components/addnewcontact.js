@@ -7,16 +7,14 @@ import CloseIcon from '@material-ui/icons/Close';
 
 export default function AddNewContact({closeModal}) {
 
-   const phoneRef = useRef()
+   const userNameRef = useRef()
    const {createContact} = useUser()
    const [error,setError]=useState('')
    
 
   async function handleSubmit()
   {
-    let responseStatus = await createContact(phoneRef.current.value)
-
-    console.log(responseStatus)
+    let responseStatus = await createContact(userNameRef.current.value)
 
     if(responseStatus.status === 'ok')
     {
@@ -46,8 +44,8 @@ export default function AddNewContact({closeModal}) {
         
               <div className='add_new_contact'>
                
-                <h3 className='enter_phone'>Phone :</h3>
-                <input className='add_new_input' type='text' ref={phoneRef} required/>
+                <h3 className='enter_phone'>userName:</h3>
+                <input className='add_new_input' type='text' ref={userNameRef} required/>
                 <button className='add_new_button' onClick={handleSubmit}> Add Contact</button>
               </div>
                 <span className='show_error'>{error}</span>

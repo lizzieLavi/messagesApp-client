@@ -10,8 +10,9 @@ function Register(props) {
    
     const[phone,setPhone] =useState('')
     const[name,setName] =useState('')
-    const [Picture,setPicture] =useState()
+    const [Picture,setPicture] =useState(null)
     const history=useHistory();
+    const [error,setError] =useState('')
 
 
     /*get user information and token from DB*/
@@ -19,17 +20,23 @@ function Register(props) {
     {
 
         e.preventDefault();
-
+        
         let picturePath=''
-        const data = new FormData()
-        data.append('file',Picture)
-        data.append("upload_preset","whatsApp_clone")
-        data.append("cloud_name","dsrgpqnyv")
+
+        if(Picture)
+        {
+         const data = new FormData()
+         data.append('file',Picture)
+         data.append("upload_preset","whatsApp_clone")
+         data.append("cloud_name","dsrgpqnyv")
        
-        try{
-        let response = await axios.post("https://api.cloudinary.com/v1_1/dsrgpqnyv/image/upload",data)
-        picturePath =response.data.url
-        }catch(err){console.log(err)}
+         try
+         {
+          let response = await axios.post("https://api.cloudinary.com/v1_1/dsrgpqnyv/image/upload",data)
+          picturePath =response.data.url
+         }catch(err){console.log(err)}
+
+      }
 
 
 
@@ -40,13 +47,20 @@ function Register(props) {
 
        try{
             const response = await axios.post("https://messagesapp1.herokuapp.com/api/logIn/Register",obj)
-   
-            sessionStorage['config']= response.data.token 
-            sessionStorage['id'] = response.data.User._id
-            sessionStorage['name'] = response.data.User.name
-            props.CanLogIn(response.data.User._id)
+            if(response.data.status === 'error')
+            {
+              setError(response.data.message)
+            }
 
-            history.push('/App')
+            else
+            {
+              sessionStorage['config']= response.data.token 
+              sessionStorage['id'] = response.data.User._id
+              sessionStorage['name'] = response.data.User.name
+              props.CanLogIn(response.data.User._id)
+
+              history.push('/App')
+            }
         }
        catch(err){console.log(err)}
 
@@ -98,6 +112,7 @@ function Register(props) {
         <Link  className="submits sign-up defaultLink" to={`/`}>    <i style={{margin:'7px'}}class="fa fa-user-plus" aria-hidden="true"/>back to Log In</Link>
    
        </div>
+       <span style={{fontSize:'15px'}}>{error}</span>
      </div>
 
 </form>
