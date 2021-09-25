@@ -3,7 +3,7 @@ import { useState ,useCallback,useEffect} from 'react'
 import { useConversations } from '../contexts/conversationsprovider';
 import { useSocket} from '../contexts/socketprovider';
 import { useUser} from '../contexts/userprovider';
-import {IconButton } from '@material-ui/core'
+import {IconButton,Dialog } from '@material-ui/core'
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import MicIcon from '@material-ui/icons/Mic';
 import CloseIcon from '@material-ui/icons/Close';
@@ -23,7 +23,7 @@ function ChatBody(props) {
     const [Text,setText] = useState('')
     const {socket} = useSocket()
     const {info} = useUser()
-    const {sendMessage,selectedConversation} = useConversations()
+    const {sendMessage,selectedConversation,removedFromGroupFlag,setRemovedFromGroupFlag,setSelectedConversation} = useConversations()
     const inputRef = useRef(null)
   
     const [emojiFlag,setEmojiFlag] = useState(false)
@@ -138,6 +138,12 @@ function ChatBody(props) {
       return recordDiv
   
     }
+
+    function handleRemovedFromGroup()
+    {
+      setRemovedFromGroupFlag(false)
+      setSelectedConversation()
+    }
     
 
     const onEmojiClick = (event, emojiObject) => {
@@ -207,6 +213,14 @@ function ChatBody(props) {
          </div>
 
       </div>
+      <Dialog className='exit_group_dialog'  open={removedFromGroupFlag}>
+                <div style={{padding:'10px'}}>
+                    <h2 className='dialog_title'> you where removed from this group</h2>
+                    <div className='dialog_options_buttons'>
+                      <button className='dialog_button' onClick={()=>handleRemovedFromGroup()} >ok</button>
+                    </div>
+                </div>
+      </Dialog> 
 
     </div>
 

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useUser } from "./userprovider";
 import { useSocket } from "./socketprovider";
 import axios from "axios";
-import Conversations from "../components/conversations";
+
 
 
 const ConversationsContext = React.createContext();
@@ -23,6 +23,7 @@ export function ConversationsProvider({ id, children }) {
   const [currentConversationIsConnected,setCurrentConversationIsConnected] = useState('')
   const config = { headers: { "x-access-token": sessionStorage["config"] } };
   const [showDetails,setShowDetails] =useState(false)
+  const [removedFromGroupFlag,setRemovedFromGroupFlag] = useState(false)
 
   const audio = new Audio('https://res.cloudinary.com/dsrgpqnyv/video/upload/v1630680168/juntos-607_qsfc7i.mp3');
 
@@ -46,7 +47,24 @@ export function ConversationsProvider({ id, children }) {
 
     socket.current.on('update-conversation',async ()=>
     {
+    
       getConversations().then(res=> setConversations(res))
+    
+    })
+
+    socket.current.on('removed-user',async ()=>
+    {
+    
+      getConversations().then(res=> 
+        {
+          setConversations(res)
+          if(selectedConversation)
+          {
+            let checkIfDeleted=res.filter(conversation=> conversation._id === selectedConversation._id)
+            if(checkIfDeleted.length ==0 ) 
+               setRemovedFromGroupFlag(true)
+          }
+      })
     
     })
   }
@@ -265,8 +283,6 @@ export function ConversationsProvider({ id, children }) {
          if(!(updatedConversation.LastMessage.message.includes('left')))
          {
 
-          console.log('in update conversations')
-          socket.current.emit('conversation-changed',updatedConversation)
           setSelectedConversation(updatedConversation)
         
            conversations.forEach(conversation=>
@@ -282,13 +298,16 @@ export function ConversationsProvider({ id, children }) {
           }
           else
           {
-            socket.current.emit('conversation-changed',selectedConversation)
             console.log(conversations)
              UpdatedConversations=conversations.filter(conversation=> conversation._id != selectedConversation._id)
              setSelectedConversation()
           }
 
-            socket.current.emit('conversation-changed',updatedConversation)
+          if(updatedConversation.LastMessage.message.includes('removed'))
+              socket.current.emit('user-deleted',selectedConversation)
+          else
+              socket.current.emit('conversation-changed',selectedConversation)
+
 
 
 
@@ -433,7 +452,9 @@ export function ConversationsProvider({ id, children }) {
         getSearchConverastions,
         showDetails,
         setShowDetails,
-        UpdateConversation
+        UpdateConversation,
+        removedFromGroupFlag,
+        setRemovedFromGroupFlag
       
       }}
     >

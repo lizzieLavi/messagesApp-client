@@ -17,19 +17,34 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import AddGroupMember from './addgroupmember';
 import Dialog from '@material-ui/core/Dialog';
 
+
 const useStyles = makeStyles({
   root: {
     "&:hover": {
       backgroundColor: "transparent"
+
+    }},
+    
+    options:
+    {
+      "&":{
+      color:"transparent"
+      },
+      "&:hover": {
+        color: "gray",
+        backgroundColor:"transparent",
+        fontSize:'15px',
+        position:'relative',
+        zIndex:'2'
+      }
     }
-  }
-});
+  });
 
 
 export default function Chat() {
 
-    const {selectedConversation,currentConversationIsConnected,typingFlag,
-      setTypingFlag,showDetails,setShowDetails,UpdateConversation} = useConversations()
+    const {selectedConversation,currentConversationIsConnected,typingFlag,createConversation,conversations,setSelectedConversation,
+     setTypingFlag,showDetails,setShowDetails,UpdateConversation} = useConversations()
     const [imageFlag,setImageFlag] =useState(false)
     const [imageURL,setImageURL] =useState(false)
     const [EditGroupNameGlag,setEditGroupNameGlag]=useState(false)
@@ -41,6 +56,9 @@ export default function Chat() {
     const classes = useStyles();
     const [modalOpen, setModalOpen] = useState(false)
     const [dialogOpen, setDialogOpen] = useState(false)
+    const [deleteUserDialog,setDeleteUserDialog]= useState(false)
+    const [userToDelete,setUserToDelete] = useState()
+
 
 
 
@@ -135,6 +153,27 @@ export default function Chat() {
 
     }
 
+    function openConversation(participant)
+    {
+        let existsFlag=false
+        conversations.forEach(conversation=>
+        {
+            if(conversation.isGroup==false && conversation.Participants[0].id==participant.id)
+            {
+              existsFlag=true
+               setSelectedConversation(conversation)
+            }
+            
+        })
+        if(!existsFlag)
+        {
+          let participantId=[]
+          participantId.push(participant.id)
+          createConversation(participantId, participant.name, participant.imageName,false)
+        }
+      
+    }
+
     function changeGroupDescription()
     {
       let message={name:"manager",message: sessionStorage['name'] +" changed group Description",timeSent:'',containsImage:false,containsRecord:false,recordURL:null}
@@ -156,9 +195,31 @@ export default function Chat() {
     setDialogOpen(false)
   }
 
-    function closeModal() {
-      setModalOpen(false)
-    }
+  function beforeDeleteUser(participant)
+  {
+    setUserToDelete(participant)
+    setDeleteUserDialog(true)
+  }
+
+  function removeUserFromGroup()
+  {
+    let messages=selectedConversation.Messages
+    let message={name:"manager",message: sessionStorage['name'] +" removed " + userToDelete.name + " from the group ",timeSent:'',containsImage:false,containsRecord:false,recordURL:null}
+    messages.push(message)
+    let participants= selectedConversation.Participants.filter(participant=> participant.id != userToDelete.id)
+    let updatedConversation={...selectedConversation,Participants:participants,Messages:messages,LastMessage:message}
+    UpdateConversation(updatedConversation)
+    setUserToDelete()
+    setDeleteUserDialog(false)
+
+  }
+
+
+  function closeModal() {
+     setModalOpen(false)
+  }
+
+
 
     const chatSide=
     <div>
@@ -261,11 +322,11 @@ export default function Chat() {
             {selectedConversation.Participants.map((participant,index)=>
             {
               return(
-                 <div key={index} className='participant'>
-                   <div style={{display:'flex',flexGrow:'1',flexDirection:'row',alignItems:'center'}}>
-                 
+                 <div  key={index} className='participant' >
+                   
+                   <div onClick={()=>openConversation(participant)} style={{display:'flex',flexGrow:'1',flexDirection:'row',alignItems:'center',cursor:'pointer'}}>
                    <Avatar src={participant.imageName}/>
-                   <div style={{display:'flex',flexGrow:'1',flexDirection:'row',alignItems:'center'}}>
+                   <div  style={{display:'flex',flexGrow:'1',flexDirection:'row',alignItems:'center'}}>
                    <h3 className='group_participant_name'>{participant.name}</h3>
                    
                    {participant.id===selectedConversation.creatorId?
@@ -274,6 +335,10 @@ export default function Chat() {
                    </div>:''}
                    </div >
                    </div>
+                   {sessionStorage['id'] === selectedConversation.creatorId?
+                      <IconButton  onClick={()=>beforeDeleteUser(participant)} style={{padding:'3px'}}>
+                        <CloseIcon fontSize='medium'/>
+                      </IconButton> :''}
                  </div>)
             })}
 
@@ -303,8 +368,6 @@ export default function Chat() {
                 </div>
            
             </div>:''}
-
-        
            
             </span>
             </div>
@@ -314,6 +377,17 @@ export default function Chat() {
                  <div className='dialog_options_buttons'>
                    <button className='dialog_button' onClick={()=>removeFromGroup()} >yes</button>
                    <button className='dialog_button' onClick={()=>setDialogOpen(false)}>no</button>
+                 </div>
+                </div>
+            </Dialog>
+
+
+            <Dialog className='exit_group_dialog' onClose={()=> setDeleteUserDialog(false)}  open={deleteUserDialog}>
+               <div style={{padding:'10px'}}>
+                 <h2 className='dialog_title'> are you sure you want to delete this user?</h2>
+                 <div className='dialog_options_buttons'>
+                   <button className='dialog_button' onClick={()=>removeUserFromGroup()} >yes</button>
+                   <button className='dialog_button' onClick={()=>setDeleteUserDialog(false)}>no</button>
                  </div>
                 </div>
             </Dialog>

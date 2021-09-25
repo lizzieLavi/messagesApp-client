@@ -328,7 +328,6 @@
     background-color: lightblue;
     margin-bottom: 12px;
 
-
 }
 
 .participant 
@@ -371,6 +370,14 @@
     align-items: center;
     padding:5px;
 }
+.member_options
+{
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    background-color: white;
+    opacity: 0.8;
+}
 
 .leaveGroup 
 {
@@ -392,6 +399,8 @@
     border-radius: 10px;
     border:1px solid black;
 }
+
+
 
 .dialog_title
 {
@@ -423,6 +432,7 @@
 {
     background-color: #9ac2c2;
 }
+
 
 
 
