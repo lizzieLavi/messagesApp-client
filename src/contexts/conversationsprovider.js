@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useUser } from "./userprovider";
 import { useSocket } from "./socketprovider";
 import axios from "axios";
+import Conversations from "../components/conversations";
 
 
 const ConversationsContext = React.createContext();
@@ -21,6 +22,7 @@ export function ConversationsProvider({ id, children }) {
   const [typingFlag,setTypingFlag] =useState('')
   const [currentConversationIsConnected,setCurrentConversationIsConnected] = useState('')
   const config = { headers: { "x-access-token": sessionStorage["config"] } };
+  const [showDetails,setShowDetails] =useState(false)
 
   const audio = new Audio('https://res.cloudinary.com/dsrgpqnyv/video/upload/v1630680168/juntos-607_qsfc7i.mp3');
 
@@ -41,6 +43,12 @@ export function ConversationsProvider({ id, children }) {
           }
         }
     } )
+
+    socket.current.on('update-conversation',async ()=>
+    {
+      getConversations().then(res=> setConversations(res))
+    
+    })
   }
   fetchData();
   },[selectedConversation])
@@ -81,17 +89,15 @@ export function ConversationsProvider({ id, children }) {
   {
     try{
        let response = await axios.get("https://messagesapp1.herokuapp.com/api/conversations/UserConversations/" +sessionStorage["id"],config);
-
        let ConversationsList = response.data.map((conversation) =>
        {
          let UpdatedConversation= conversation
-
-         if (conversation.Participants.length === 1 && conversation.Name === sessionStorage["name"])
+         if (!conversation.Participants.isGroup && conversation.Name === sessionStorage["name"])
             UpdatedConversation = { ...UpdatedConversation,Name: conversation.Participants[0].name,ConversationImage:conversation.Participants[0].image}
 
          if(selectedConversation)
          {
-           if(selectedConversation.id === UpdatedConversation.id)
+           if(selectedConversation._id === UpdatedConversation._id)
               setSelectedConversation(UpdatedConversation)
          }
           
@@ -124,8 +130,6 @@ export function ConversationsProvider({ id, children }) {
   async function createConversation(ids, name, image,groupFlag) {
     let ConversationImage = image;
     let isGroup = groupFlag;
-
-    console.log(isGroup)
 
 
     //no participants chosen
@@ -170,6 +174,7 @@ export function ConversationsProvider({ id, children }) {
       
       if (isGroup) {
 
+
         let parts = new Intl.DateTimeFormat('en', {
           hc: 'h12',
           year: 'numeric',
@@ -183,8 +188,11 @@ export function ConversationsProvider({ id, children }) {
           acc[part.type] = part.value;
           return acc;
         }, Object.create(null));
+
+       
     
         createdDate= `${parts.day}/${parts.month}/${parts.year} ${parts.hour}:${parts.minute}`;
+
         const data = new FormData()
         data.append('file',ConversationImage)
         data.append("upload_preset","whatsApp_clone")
@@ -196,8 +204,8 @@ export function ConversationsProvider({ id, children }) {
         }catch(err){console.log(err)}
    
       }
+ 
     
-      console.log(isGroup)
       let newConversation = {
         Name: name,
         creatorId: sessionStorage["id"],
@@ -206,11 +214,13 @@ export function ConversationsProvider({ id, children }) {
         LastMessage: { id: "", sender: "", message: "" },
         ConversationImage: ConversationImage,
         isGroup:isGroup,
-        createdDate:createdDate
+        createdDate:createdDate,
+        description: "Add Description",
       };
 
       //updateDB
       try {
+        console.log(newConversation)
         let Response = await axios.post(
           "https://messagesapp1.herokuapp.com/api/conversations",
           newConversation,
@@ -231,6 +241,62 @@ export function ConversationsProvider({ id, children }) {
         console.log(err);
       }
     }
+  }
+
+  async function UpdateConversation(updatedConversation)
+  {
+
+    let updateDBConv={...updatedConversation}
+    if(!(updatedConversation.LastMessage.message.includes('left')))
+    {
+      let addCurrentParticipant= {id: info.id,phone: info.phone,name: info.name,image: info.imageName,}
+      let participants=[...updatedConversation.Participants,addCurrentParticipant]
+      updateDBConv={...updateDBConv,Participants:participants}
+    }
+    delete updateDBConv._id
+
+
+      try{
+        let response=await axios.put("https://messagesapp1.herokuapp.com/api/conversations/"+ selectedConversation._id,updateDBConv,config)
+        if(response.data.status==='Updated')
+        {
+
+          let UpdatedConversations=[]
+         if(!(updatedConversation.LastMessage.message.includes('left')))
+         {
+
+          console.log('in update conversations')
+          socket.current.emit('conversation-changed',updatedConversation)
+          setSelectedConversation(updatedConversation)
+        
+           conversations.forEach(conversation=>
+            {
+              
+              if(conversation._id===updatedConversation._id)
+              {
+                   
+                  UpdatedConversations.push(updatedConversation)
+              }
+              else UpdatedConversations.push(conversation)
+            })
+          }
+          else
+          {
+            socket.current.emit('conversation-changed',selectedConversation)
+            console.log(conversations)
+             UpdatedConversations=conversations.filter(conversation=> conversation._id != selectedConversation._id)
+             setSelectedConversation()
+          }
+
+            socket.current.emit('conversation-changed',updatedConversation)
+
+
+
+            setConversations(UpdatedConversations)
+          
+            
+        }
+      }catch(err){console.log(err)}
   }
 
  
@@ -365,6 +431,9 @@ export function ConversationsProvider({ id, children }) {
         typingFlag,
         setTypingFlag,
         getSearchConverastions,
+        showDetails,
+        setShowDetails,
+        UpdateConversation
       
       }}
     >

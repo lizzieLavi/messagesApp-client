@@ -1,5 +1,5 @@
 
-audio{
+ audio{
     width: 250px;
     height: 45px;
     border-radius: 0px;
@@ -7,33 +7,41 @@ audio{
    
 }
 
+.message_in audio
+{
+    background-color: #CED2D5;
+}
 
- .sender audio::-webkit-media-controls-panel  {
+
+.message_out audio
+{
+    background-color: #90B8B8; 
+}
+ .message_in audio::-webkit-media-controls-panel  {
   background-color: #CED2D5;
 
   border-color: #CED2D5;
 }
 
-.reciever  audio::-webkit-media-controls-panel  {
-    background-color: #90B8B8;
+.message_out audio::-webkit-media-controls-panel  {
+    background-color: #90B8B8; 
 
   }
 
-  audio::-webkit-media-controls-enclosure
-  {
-    
-  }
 
-audio::-webkit-media-controls-current-time-display,audio::-webkit-media-controls-time-remaining-display ,
-audio::-webkit-media-controls-mute-button,audio::-webkit-media-controls-volume-slider-container,
-audio::-webkit-media-controls-volume-slider,audio::-webkit-media-controls-volume-slider-container:hover
-{
-    display: none;
-    width:0px;
-}
+
 
 audio::-webkit-media-controls-volume-slider:hover{
     display:none;
+}
+
+audio::-webkit-media-controls-play-button
+{
+
+    width: 34px;
+    height: 34px;
+    color: rgba(var(--icon-strong-rgb),.5);
+    color:lightblue;
 }
 
 
@@ -48,4 +56,7 @@ audio::-webkit-media-controls-volume-slider:hover{
 {
     display: flex;
     align-items: center;
+    position: relative;
+    padding:6px;
+
 }

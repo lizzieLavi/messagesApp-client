@@ -8,6 +8,7 @@ function AudioMessage({message,sender,image})
 
     return (
     
+        <div className={sender}>  
        <div className='message_with_audio'>
            <div className='audio_and_time'> 
                <div className={messageColor}>
@@ -18,6 +19,7 @@ function AudioMessage({message,sender,image})
                <span className='message_time'>{(message.timeSent).substring(11,17)}</span> 
            </div>
            <Avatar src={image} style={{ height: '50px', width: '50px' }}/>
+        </div>
         </div>
     )
 }

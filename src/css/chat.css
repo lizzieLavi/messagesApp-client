@@ -57,55 +57,112 @@
     overflow-y: overlay;
 }
 
-
 .chat_message
 {
+    padding-right:40px;
+    padding-left: 40px;
     position: relative;
-    padding:8px;
-    width:fit-content;
-    border-radius: 10px;
-    margin-bottom: 30px;
-    background-color: #CED2D5;
-}
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
 
-.sender_name
-{  
-    color: black;
-    position: absolute;
-    top:5px;
-    font-weight: 700;
-    font-size: 12px; 
+
+}
+.sender
+{
+    display: inline-flex;
+    max-width: 100%;
+    font-size: 12.8px;
+    font-weight: 600;
+    line-height: 18px;
 }
 
 .message_content
 {
-    padding:10px;
-    padding-bottom: 3px;
-
+    position: relative;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
 }
 
-.message_time_and_content
+.message_and_time 
 {
     display: flex;
     flex-direction: row;
     align-items: flex-end;
     justify-content: space-between;
-    
+}
 
+.message_time_border
+{
+    float: right;
+    margin-left: 15px;
 }
 
 .message_time
 {
-    color: gray;
+    height: 15px;
     font-size: 11px;
+    line-height: 17px;
+    color: rgba(0,0,0,0.45);
+
 }
 
 .chat_reciever
 {
   margin-left: auto;
-  background-color: #90B8B8;
+  display: flex;
+  align-items: flex-start;
 
 }
+
+.chat_sender
+{
+    margin-right: auto;
+    display: flex;
+    align-items: flex-end;
+
+}
+
+.message_in
+{
+    background-color: #CED2D5;
+    border-radius: 7.5px;
+    box-shadow: 0 1px .5px rgba(0,0,0,.13);
+    position: relative;
+    flex: none;
+    font-size: 14.2px;
+    line-height: 19px;
+    
+}
+
+.message_out
+{
+    background-color: #90B8B8;
+    box-shadow: 0 1px .5px rgba(0,0,0,.13);
+    border-radius: 7.5px;
+    position: relative;
+    flex: none;
+    font-size: 14.2px;
+    line-height: 19px;
+}
+
+.message 
+{
+    padding: 6px 7px 8px 9px;
+}
+
+.message_section
+{
+   flex:1;
+   display:flex;
+}
+
+.image_and_sender
+{
+    display: flex;
+    flex-direction: column;
+}
+
 
 .chat_footer
 {
@@ -117,12 +174,6 @@
 
 }
 
-.message_section
-{
-   flex:1;
-   display:flex;
-}
-
 .chat_footer > form > .message_input
 {
     flex:1;
@@ -131,7 +182,6 @@
     border:none;
     outline: none;
 }
-
 
 .chat_footer > form > button
 {
@@ -160,7 +210,7 @@
 
 .image_in_message
 {
-    padding-top: 20px;
+    padding: 10px;
 
 }
 
@@ -208,7 +258,6 @@
 .user_info
 {
     background-color: #c8c4c1;
-    padding:20px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -216,9 +265,169 @@
 
 .name_and_lastSeen
 {
-    margin:20px 10px;
-    
+    padding:20px;
+    padding-top: 0px;
+    width: 100%; 
 }
+
+.group_title
+{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: 18px;
+}
+
+.group_details_container
+{
+    background-color: #c8c4c1;
+    display: flex;
+    flex-direction: column;
+    margin: 5px 0px 5px 0px;
+    padding:10px;
+}
+
+
+.edit_group_name
+{
+    flex:1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-bottom: 1px solid #90B8B8;
+    color:black; 
+}  
+
+.add_emoji
+{
+    display: flex;
+    flex-direction: column;
+
+}
+
+.around_message
+{
+    padding-right:50px;
+    padding-left: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    position: relative;
+
+}
+
+.manager_message
+{
+  
+    padding:5px 12px 6px 12px;
+    font-size: 12.5px;
+    width:fit-content;
+    border-radius: 7px;
+    margin-bottom: 30px;
+    text-align: center;
+    background-color: lightblue;
+    margin-bottom: 12px;
+
+
+}
+
+.participant 
+{
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    padding:10px;
+    margin-right: 10px;
+    border-bottom: 1px solid #B0B0B0;
+}
+
+.participant:hover 
+{
+    background-color: #CDC9C7;
+}
+
+.group_admin 
+{
+    border: 2px solid #90B8B8;
+    text-align: right;
+    display: flex;
+    align-items: center;
+    line-height: normal;
+}
+
+.group_participant_name
+{
+    display: flex;
+    flex-grow: 1;
+    overflow: hidden;
+    font-size: 15px;
+    margin-left:10px;
+}
+
+.group_description_edit 
+{
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    padding:5px;
+}
+
+.leaveGroup 
+{
+    padding:10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+}
+
+.leave:hover 
+{
+    background-color: #CDC9C7;
+}
+
+.exit_group_dialog .MuiDialog-paper 
+{
+    background-color: #B0B0B0;
+    border-radius: 10px;
+    border:1px solid black;
+}
+
+.dialog_title
+{
+    padding:10px;
+    font-size: 20px;
+}
+
+.dialog_options_buttons 
+{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.dialog_button 
+{
+    padding:5px;
+    margin: 10px 10px 5px 10px;
+    width: 100px;
+    border-radius: 7px;
+    background-color: #90B8B8;
+    font-size: 17px;
+    font-weight: 500px;
+    cursor: pointer;
+}
+
+.dialog_button:hover 
+{
+    background-color: #9ac2c2;
+}
+
+
+
+
+
 
 
 

@@ -65,7 +65,6 @@ export  function UserProvider({ children })
     try{ 
 
       const response= await axios.get("https://messagesapp1.herokuapp.com/api/logIn/getByPhone/" + phone,config)
-      console.log(response)
       if(response.data !== 'no such user')
       {
        const contact = {id:response.data._id,phone:response.data.phone,name:response.data.name,imageName:response.data.imageName}

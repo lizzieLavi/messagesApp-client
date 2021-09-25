@@ -51,7 +51,7 @@ function SendImageBody(props) {
 
           <div className='add_message'>
           <form onSubmit={()=>handleSubmit(true)} className='message_section'>
-          <IconButton type='submit'>
+          <IconButton type='submit' style={{flex:'0.1'}}>
             <SendIcon fontSize='large'/>
          </IconButton>
          <input className='message_input' ref={inputRef}  value={Text} onChange={typing} type='text' placeholder='type a message'/>

@@ -28,9 +28,13 @@ function ChatBody(props) {
   
     const [emojiFlag,setEmojiFlag] = useState(false)
     const [recordFlag,setRecordFlag] =useState(false)
-    const {status,startRecording,stopRecording,mediaBlobUrl,clearBlobUrl} = useReactMediaRecorder({audio: true })
+    const {startRecording,stopRecording,mediaBlobUrl,clearBlobUrl} = useReactMediaRecorder({audio: true })
     const [audioBlob,setAudioBlob] = useState(null)
-    let chatWidth='chat_body'
+  
+
+    useEffect(()=>{
+      setEmojiFlag(false)
+    },[selectedConversation])
 
 
     const setRef = useCallback((node) => 
@@ -148,19 +152,31 @@ function ChatBody(props) {
      
  <div className='chat_body'>
       
-      
+      {console.log(selectedConversation)}
         {selectedConversation.Messages.map((message,index)=>
          {
             const lastMessage = selectedConversation.Messages.length -1 === index
-            let sender = message.id===sessionStorage['id']? 'chat_message' : ' chat_message chat_reciever'
+            let sender= ''
+            sender= message.name==='manager'? 'manager':( message.id===sessionStorage['id']? 'message_out' : 'message_in')
             let image=message.id===sessionStorage['id']? info.imageName :selectedConversation.ConversationImage
+            let choosenClass = sender==='message_in'? 'chat_message chat_sender': ' chat_message chat_reciever'
 
             return (
-                <div key={index} className={sender} ref={lastMessage ? setRef : null}>
-                    {message.containsRecord ? 
-                    <AudioMessage message={message} sender={sender} image={image}/> : <Message message={message}/> }
+             
+                     <div>
+                      {sender == 'manager'?
+                      <div className='around_message'ref={lastMessage ? setRef : null}>
+                        <div className='manager_message'>
+                      
+                     <span className='message_content'>{message.message}</span>
+                     </div>
+                     </div>:
 
-                </div> 
+                     <div key={index} className={choosenClass} ref={lastMessage ? setRef : null}>
+                    {message.containsRecord ? 
+                    <AudioMessage message={message} sender={sender} image={image}/> : <Message  sender={sender} message={message}/>}
+                    </div> }
+                </div>
           )}
         )}
 
