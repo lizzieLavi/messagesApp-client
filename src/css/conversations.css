@@ -1,5 +1,5 @@
 .Chats{
-    height: 442px;
+    height: 440px;
     display: flex;
     flex-direction: column;
     background-color: #c8c4c1;
@@ -7,6 +7,11 @@
     margin:10px;
     border-radius: 10px; 
     
+}
+
+.contacts
+{
+    height: 410px;
 }
 
 .contacts_list

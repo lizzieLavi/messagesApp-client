@@ -20,7 +20,7 @@ export default function Contacts({newConversationCallback,openModalCallback})
 
   return (
 
-    <div className='Chats' >
+    <div className='Chats contacts'  >
       <h4 className='new_chat_title'>Start New Chat:</h4>            
       <Button  style={{height:'30px' ,margin:'5px 0px',fontSize:'10px'}} onClick={()=>openModalCallback()}
       className='add_new_Button' > Create Group </Button>
