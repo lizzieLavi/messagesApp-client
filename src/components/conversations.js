@@ -23,7 +23,7 @@ export default function Conversations()
         {
           return  (   
             <div key={index}  onClick={()=>handleSelectedConversation(conversation)}  className='ChatsListItem'>
-              <Avatar src={process.env.PUBLIC_URL + conversation.ConversationImage}/>
+              <Avatar src={conversation.ConversationImage}/>
               <div className='chatInfo'>
                 <h2 className='user_name'>{conversation.Name}</h2>
                 <span className='user_status'> {(conversation.LastMessage.message).slice(0,28)}... </span>
