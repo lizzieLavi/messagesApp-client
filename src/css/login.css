@@ -28,6 +28,7 @@ opacity: .95;
     padding: 2%;
     background-image: linear-gradient(-225deg, #90B8B8 50%, #CED2D5 50%);
 }
+
 /* form Container */
 form .con {
     display: flex;
@@ -38,12 +39,15 @@ form .con {
       margin: 0 auto;
 }
 
+
 .field-set
 {
     display: flex;
     flex-direction: column;
     margin:10px;
     padding:10px;
+    margin-top: 0px;
+    padding-top:0px;
 }
 
 /* the header form form */
@@ -61,9 +65,6 @@ form .con {
 /*  A welcome message or an explanation of the login form */
 header p {letter-spacing: 0.05em;}
 
-
-
-
 .input-item {
     background: #fff;
     color: #333;
@@ -71,8 +72,6 @@ header p {letter-spacing: 0.05em;}
     margin:10px;
 
 }
-
-
 
 /* inputs form  */
 form input[class="form-input"]{
@@ -95,16 +94,11 @@ input:focus {
     border-radius: 5px;
 }
 
-form input[type="file" i] 
+.add_Profile_Picture
 {
-   visibility: hidden;
-}
-
-.picture-input
-{
-    position: absolute;
-    z-index: 1;
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* buttons  */
@@ -155,8 +149,6 @@ form button {
     margin-top: 10px;
     letter-spacing: 0.05em;
 }
-
-
 
 
 /* buttons hover */
@@ -239,13 +231,4 @@ form button {
     margin:0px 10px;
 }
 
-#fileupload
-{
-    display:flex;
-    align-items: center;
-  width: 340px;
-  height: 50px;
-  padding:10px 0px;
-  margin:10px;
-}
 

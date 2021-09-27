@@ -20,7 +20,6 @@
 
 }
 
-
 .add_new_contact_border
 {
     height: 22vh;
@@ -192,21 +191,30 @@
  
 }
 
-.change_group_image:hover img
+.change_group_image:hover .MuiAvatar-img
 {
-    opacity: 0.3;
+    opacity: 0.5;
 }
 
 
 .change_image_on_hover
 {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    position:absolute;
+    z-index:1;
+    color:white;
     opacity: 0;
+
 }
 
 .change_image_on_hover:hover
 {
     opacity: 1;
 }
+
+
 
 .show_error
 {

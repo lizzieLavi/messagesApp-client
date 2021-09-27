@@ -10,11 +10,10 @@ export default withRouter(function Dashboard({id}) {
 
     return (
         <div className='dashboard'>
-       
-           <div className='dashboard_body'>
-              <SideBar id={id}/>
+            <div className='dashboard_body'>
+              <SideBar/>
               {selectedConversation!==undefined?  <Chat id={id}  />: ''}
-           </div>
+            </div>
         </div>
     )
 })

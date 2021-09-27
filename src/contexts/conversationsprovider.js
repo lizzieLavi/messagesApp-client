@@ -8,11 +8,14 @@ import axios from "axios";
 
 const ConversationsContext = React.createContext();
 
-export function useConversations() {
+export function useConversations() 
+{
   return useContext(ConversationsContext);
 }
 
-export function ConversationsProvider({ id, children }) {
+export function ConversationsProvider({children }) 
+{
+
   const {contacts, info} = useUser();
   const [conversations, setConversations] = useState([]);
   const [selectedConversation, setSelectedConversation] = useState();
@@ -24,11 +27,11 @@ export function ConversationsProvider({ id, children }) {
   const config = { headers: { "x-access-token": sessionStorage["config"] } };
   const [showDetails,setShowDetails] =useState(false)
   const [removedFromGroupFlag,setRemovedFromGroupFlag] = useState(false)
-
   const audio = new Audio('https://res.cloudinary.com/dsrgpqnyv/video/upload/v1630680168/juntos-607_qsfc7i.mp3');
 
 
-  useEffect(()=>{
+  useEffect(()=>
+  {
 
     async function fetchData() {
 
@@ -43,7 +46,7 @@ export function ConversationsProvider({ id, children }) {
              setTypingFlag(user.name)
           }
         }
-    } )
+    })
 
     socket.current.on('update-conversation',async ()=>
     {
@@ -56,24 +59,29 @@ export function ConversationsProvider({ id, children }) {
     {
     
       getConversations().then(res=> 
+      {
+        setConversations(res)
+        if(selectedConversation)
         {
-          setConversations(res)
-          if(selectedConversation)
-          {
-            let checkIfDeleted=res.filter(conversation=> conversation._id === selectedConversation._id)
-            if(checkIfDeleted.length ==0 ) 
-               setRemovedFromGroupFlag(true)
-          }
+          let checkIfDeleted=res.filter(conversation=> conversation._id === selectedConversation._id)
+          if(checkIfDeleted.length === 0 ) 
+            setRemovedFromGroupFlag(true)
+
+        }
+
       })
     
     })
   }
+
   fetchData();
+
   },[selectedConversation])
 
   useEffect( ()=>
   {
     async function fetchData() {
+
     if(selectedConversation)
     {
     if(!selectedConversation.isGroup)
@@ -90,9 +98,10 @@ export function ConversationsProvider({ id, children }) {
      }
     }
   }
+
   fetchData();
 
-  },[ConnectedUsers,selectedConversation])
+  },[ConnectedUsers,setSelectedConversation])
 
   useEffect(() =>
   {
@@ -105,25 +114,31 @@ export function ConversationsProvider({ id, children }) {
 
   async function getConversations()
   {
-    try{
-       let response = await axios.get("https://messagesapp1.herokuapp.com/api/conversations/UserConversations/" +sessionStorage["id"],config);
-       let ConversationsList = response.data.map((conversation) =>
-       {
-         let UpdatedConversation= conversation
-         if (!conversation.Participants.isGroup && conversation.Name === sessionStorage["name"])
-            UpdatedConversation = { ...UpdatedConversation,Name: conversation.Participants[0].name,ConversationImage:conversation.Participants[0].image}
 
-         if(selectedConversation)
-         {
-           if(selectedConversation._id === UpdatedConversation._id)
-              setSelectedConversation(UpdatedConversation)
-         }
+    try
+    {
+      let response = await axios.get("https://messagesapp1.herokuapp.com/api/conversations/UserConversations/" +sessionStorage["id"],config);
+      let ConversationsList = response.data.map((conversation) =>
+      {
+        let UpdatedConversation= conversation
+        if (!conversation.isGroup && conversation.Name === sessionStorage["name"])
+          UpdatedConversation = { ...UpdatedConversation,Name: conversation.Participants[0].name,ConversationImage:conversation.Participants[0].image}
+
+        if(selectedConversation)
+        {
+          if(selectedConversation._id === UpdatedConversation._id)
+            setSelectedConversation(UpdatedConversation)
+
+        }
           
          return UpdatedConversation;
-       })
+
+      })
 
       return ConversationsList 
+
     } catch (err) {console.log(err);}
+
   }
 
 
@@ -131,23 +146,23 @@ export function ConversationsProvider({ id, children }) {
 
   async function getSearchConverastions(str)
   {
+    getConversations().then(res=>
+    {
+      let SearchResult = res.filter(conversation=> 
+      conversation.Name.includes(str) ===true)
+      setConversations(SearchResult)
+    })
 
-        getConversations().then(res=>
-        {
-
-         let SearchResult = res.filter(conversation=> 
-            conversation.Name.includes(str) ===true
-          )
-    
-          setConversations(SearchResult)
-        })
   }
         
 
+  async function createConversation(ids, name, image,groupFlag)
+  {
 
-  async function createConversation(ids, name, image,groupFlag) {
     let ConversationImage = image;
     let isGroup = groupFlag;
+    let messages = []
+    let lastMessage=''
 
 
     //no participants chosen
@@ -169,7 +184,8 @@ export function ConversationsProvider({ id, children }) {
     else {
 
       //get conversation participants
-      const participants = ids.map((id) => {
+      const participants = ids.map((id) => 
+      {
         let addContactToConversation = contacts.filter(
           (contact) => id === contact.id
         );
@@ -189,10 +205,8 @@ export function ConversationsProvider({ id, children }) {
       let createdDate=''
 
       //if group
-      
-      if (isGroup) {
-
-
+      if (isGroup) 
+      {
         let parts = new Intl.DateTimeFormat('en', {
           hc: 'h12',
           year: 'numeric',
@@ -207,29 +221,31 @@ export function ConversationsProvider({ id, children }) {
           return acc;
         }, Object.create(null));
 
-       
-    
         createdDate= `${parts.day}/${parts.month}/${parts.year} ${parts.hour}:${parts.minute}`;
+
+        lastMessage={name:"manager",message: info.name +" created this group",timeSent:'',containsImage:false,containsRecord:false,recordURL:null}
+        messages.push(lastMessage)
 
         const data = new FormData()
         data.append('file',ConversationImage)
         data.append("upload_preset","whatsApp_clone")
         data.append("cloud_name","dsrgpqnyv")
-        try{
-        let response = await axios.post("https://api.cloudinary.com/v1_1/dsrgpqnyv/image/upload",data)
-        ConversationImage = response.data.url;
+        try
+        {
+          let response = await axios.post("https://api.cloudinary.com/v1_1/dsrgpqnyv/image/upload",data)
+          ConversationImage = response.data.url;
 
         }catch(err){console.log(err)}
    
       }
- 
     
-      let newConversation = {
+      let newConversation = 
+      {
         Name: name,
         creatorId: sessionStorage["id"],
         Participants: participants,
-        Messages: [],
-        LastMessage: { id: "", sender: "", message: "" },
+        Messages: messages,
+        LastMessage:lastMessage,
         ConversationImage: ConversationImage,
         isGroup:isGroup,
         createdDate:createdDate,
@@ -237,27 +253,28 @@ export function ConversationsProvider({ id, children }) {
       };
 
       //updateDB
-      try {
-        console.log(newConversation)
+      try 
+      {
         let Response = await axios.post(
           "https://messagesapp1.herokuapp.com/api/conversations",
           newConversation,
           config
         );
 
-        if (Response.data.status === "created") {
+        if (Response.data.status === "created") 
+        {
           setSelectedConversation(Response.data.conversation);
 
-          //show conversation only if messages sent
-          if (Response.data.conversation.Messages.length > 0)
+          //show conversation only if messages sent or if its A group
+          if (Response.data.conversation.Messages.length > 0  || Response.data.conversation.isGroup === true)
+          {
             setConversations((prevConversations) => {
               return [...prevConversations, Response.data.conversation];
             });
-          // }
+            socket.current.emit('conversation-changed',Response.data.conversation)
+          }
         }
-      } catch (err) {
-        console.log(err);
-      }
+      }catch (err) {console.log(err);}
     }
   }
 
@@ -271,92 +288,93 @@ export function ConversationsProvider({ id, children }) {
       let participants=[...updatedConversation.Participants,addCurrentParticipant]
       updateDBConv={...updateDBConv,Participants:participants}
     }
+
     delete updateDBConv._id
 
 
-      try{
-        let response=await axios.put("https://messagesapp1.herokuapp.com/api/conversations/"+ selectedConversation._id,updateDBConv,config)
-        if(response.data.status==='Updated')
+    try
+    {
+      let response=await axios.put("https://messagesapp1.herokuapp.com/api/conversations/"+ selectedConversation._id,updateDBConv,config)
+      if(response.data.status==='Updated')
+      {
+        let UpdatedConversations=[]
+        if(!(updatedConversation.LastMessage.message.includes('left')))
         {
-
-          let UpdatedConversations=[]
-         if(!(updatedConversation.LastMessage.message.includes('left')))
-         {
-
           setSelectedConversation(updatedConversation)
-        
-           conversations.forEach(conversation=>
-            {
-              
-              if(conversation._id===updatedConversation._id)
-              {
-                   
-                  UpdatedConversations.push(updatedConversation)
-              }
-              else UpdatedConversations.push(conversation)
-            })
-          }
-          else
-          {
-            console.log(conversations)
-             UpdatedConversations=conversations.filter(conversation=> conversation._id != selectedConversation._id)
-             setSelectedConversation()
-          }
+          conversations.forEach(conversation=>
+          { 
+            if(conversation._id===updatedConversation._id)    
+              UpdatedConversations.push(updatedConversation)
+            else UpdatedConversations.push(conversation)
 
-          if(updatedConversation.LastMessage.message.includes('removed'))
-              socket.current.emit('user-deleted',selectedConversation)
-          else
-              socket.current.emit('conversation-changed',selectedConversation)
-
-
-
-
-            setConversations(UpdatedConversations)
-          
-            
+          })
         }
-      }catch(err){console.log(err)}
+        else
+        {
+          UpdatedConversations=conversations.filter(conversation=> conversation._id !== selectedConversation._id)
+          setSelectedConversation()
+        }
+
+        if(updatedConversation.LastMessage.message.includes('removed'))
+          socket.current.emit('user-deleted',selectedConversation)
+        else
+          socket.current.emit('conversation-changed',selectedConversation)
+
+        setConversations(UpdatedConversations)
+              
+      }
+    }catch(err){console.log(err)}
   }
 
- 
 
   const addMessageToConversation = useCallback(async ({ UpdatedConv }) =>
-   {
+  {
+    audio.play()
 
-      audio.play()
+    let ConversationExists = false;
+    let newListOfConversations = RefConversations.current.map((conversation) =>
+    {
+      if (conversation._id === UpdatedConv._id) 
+      {
+        ConversationExists = true;
+        let newConv = 
+        { ...conversation,
+          Messages: UpdatedConv.Messages,
+          LastMessage: UpdatedConv.LastMessage,};
+          if (currentConversationRef.current) 
+          {
+           if (currentConversationRef.current._id === UpdatedConv._id)
+             setSelectedConversation(newConv);
+          }
 
-      let ConversationExists = false;
-      let newListOfConversations = RefConversations.current.map((conversation) =>{
-          if (conversation._id === UpdatedConv._id) {
-            ConversationExists = true;
-            let newConv = { ...conversation,
-              Messages: UpdatedConv.Messages,
-              LastMessage: UpdatedConv.LastMessage,};
-            if (currentConversationRef.current) {
-              if (currentConversationRef.current._id === UpdatedConv._id)
-                setSelectedConversation(newConv);
-            }
+        return newConv;
 
-            return newConv;
-          } else return conversation;
-        }
-      );
+      }
+      else return conversation;
+    });
 
 
-      if (!ConversationExists) {
-        if (!UpdatedConv.isGroup)
-         {
-           let newConversation = { ...UpdatedConv,
-            Name: UpdatedConv.Participants[0].name,
-            ConversationImage: UpdatedConv.Participants[0].imageName,
-          };
-          setConversations((prevConversations) => [...prevConversations, newConversation ]);
-        } else
-          setConversations((prevConversations) => [...prevConversations,UpdatedConv]);
-      } else setConversations(newListOfConversations);
-    },[setConversations]);
+    if (!ConversationExists) 
+    {
+      if (!UpdatedConv.isGroup)
+      {
+        let newConversation = 
+        { ...UpdatedConv,
+        Name: UpdatedConv.Participants[0].name,
+        ConversationImage: UpdatedConv.Participants[0].imageName,
+        };
 
-  useEffect(() => {
+        setConversations((prevConversations) => [...prevConversations, newConversation ]);
+      } 
+      else
+        setConversations((prevConversations) => [...prevConversations,UpdatedConv]);
+    } 
+    else setConversations(newListOfConversations);
+  },[setConversations]);
+
+  useEffect(() => 
+  {
+
     if (socket.current == null) return;
     
     RefConversations.current = conversations;
@@ -365,43 +383,49 @@ export function ConversationsProvider({ id, children }) {
 
     return () =>
       socket.current.off("receive-message", addMessageToConversation);
-  }, [conversations, selectedConversation]);
+  },[conversations, selectedConversation]);
 
 
-  const updateSenderConversation = (AddMessage) => {
+  const updateSenderConversation = (AddMessage) => 
+  {
+
     let ConversationExists = false;
     setSelectedConversation(AddMessage);
 
-    let newListOfConcversations = conversations.map((conversation) => {
-      if (conversation._id === AddMessage._id) {
+    let newListOfConcversations = conversations.map((conversation) => 
+    {
+      if (conversation._id === AddMessage._id) 
+      {
         ConversationExists = true;
         return AddMessage;
-      } else return conversation;
+      } 
+      else return conversation;
+
     });
 
-    if (ConversationExists) {
+    if (ConversationExists) 
+    {
       setConversations(newListOfConcversations);
-    } else
-      setConversations((prevConversations) => [
-        ...prevConversations,
-        AddMessage,
-      ]);
+    } 
+    else
+      setConversations((prevConversations) => [...prevConversations,AddMessage]);
   };
 
 
   function sendMessage(text,imageFlag,imageURL,recordURL) {
 
 
-      let parts = new Intl.DateTimeFormat('en', {
-      hc: 'h12',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: 'numeric',
-      minute: 'numeric',
-      timeZone:'Asia/Jerusalem'})
+    let parts = new Intl.DateTimeFormat('en', {
+    hc: 'h12',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: 'numeric',
+    minute: 'numeric',
+    timeZone:'Asia/Jerusalem'})
     .formatToParts(new Date())
-    .reduce((acc, part) => {
+    .reduce((acc, part) => 
+    {
       acc[part.type] = part.value;
       return acc;
     }, Object.create(null));
@@ -417,18 +441,22 @@ export function ConversationsProvider({ id, children }) {
     if(imageFlag ===true)
        CurrentMessage= {...CurrentMessage,imageURL:imageURL}
     
-    let sender = {
+    let sender = 
+    {
       id: info.id,
       phone: info.phone,
       name: info.name,
       image: info.imageName,
     };
-    let AddMessage = {
-      ...selectedConversation,
+
+    let AddMessage = 
+    {...selectedConversation,
       Messages: [...selectedConversation.Messages, CurrentMessage],
       LastMessage: CurrentMessage,
     };
-    socket.current.emit("send-message", {
+
+    socket.current.emit("send-message", 
+    {
       sender: sender,
       UpdatedConversation: AddMessage,
       conversationId: selectedConversation._id,

@@ -1,17 +1,16 @@
-import '../css/app.css'
 import {useState} from 'react'
 import LogIn from './login'
 import Dashboard from './dashboard'
-import  {UserProvider} from '../contexts/userprovider'
+import {UserProvider} from '../contexts/userprovider'
 import {ConversationsProvider} from '../contexts/conversationsprovider'
 import { SocketProvider } from '../contexts/socketprovider'
 import {BrowserRouter as Router,Switch, Route,Redirect} from 'react-router-dom'
 import Register from './register'
+import '../css/app.css'
 
 
-
-
-function App() {
+function App() 
+{
 
   const [id,setId] =useState()
 
@@ -24,8 +23,6 @@ function App() {
      </UserProvider>
     </SocketProvider>
   )
-  
-
 
   return (
 

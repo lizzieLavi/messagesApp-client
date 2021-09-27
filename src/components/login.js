@@ -7,91 +7,64 @@ import 'font-awesome/css/font-awesome.min.css';
 
 
 
-export default function LogIn(props) {
+export default function LogIn(props) 
+{
 
-    const [phone,setPhone] = useState('');
-    const [UserName,setUserName] = useState('');
+  const [phone,setPhone] = useState('');
+  const [UserName,setUserName] = useState('');
+  const [Error,setError] = useState('')
+  const history=useHistory();
 
-    const [Error,setError] = useState('')
-    const history=useHistory();
+  //get user information and token from DB
+  async function handleSubmit(e)
+  {
+    setError('')
+    e.preventDefault()
+    let obj = {name: UserName,phone: phone}
+    let response = await axios.post("https://messagesapp1.herokuapp.com/api/logIn",obj)
 
-
-
-    /*get user information and token from DB*/
-    async function handleSubmit(e)
+    if(response.data !== "not found")
     {
-        setError('')
-        e.preventDefault()
-        let obj = {name: UserName,phone: phone}
-        let response = await axios.post("https://messagesapp1.herokuapp.com/api/logIn",obj)
+      sessionStorage['config']= response.data.token 
+      sessionStorage['id'] = response.data.User._id
+      sessionStorage['name'] = response.data.User.name
+      props.CanLogIn(response.data.User._id)
 
-        if(response.data !== "not found")
-        {
-           sessionStorage['config']= response.data.token 
-           sessionStorage['id'] = response.data.User._id
-           sessionStorage['name'] = response.data.User.name
-           props.CanLogIn(response.data.User._id)
+       history.push('/App')
 
-           history.push('/App')
-        }
-        
-        else
-           setError("One or more of your identification details is incorrect.")
     }
-
- 
-
-    return (
-       
-        <div class="overlay">
         
-          <form className='login_form' onSubmit={handleSubmit}>
-            <div class="con">
-              <header class="head-form">
-                <h2>Log In</h2>
-                <p>welcome to  my whatsApp</p>
-              </header>
-            <div class="field-set">
-              <span class="input-item">
-                <i class="fa fa-user-circle"></i>
-              
+    else
+      setError("One or more of your identification details is incorrect.")
+
+  }
+
+  return (
+  
+    <div class="overlay">
+      <form className='login_form' onSubmit={handleSubmit}>
+        <div class="con">
+          <header class="head-form">
+            <h2>Log In</h2>
+            <p>welcome to  my whatsApp</p>
+          </header>
+          <div class="field-set">
+            <span class="input-item">
+              <i class="fa fa-user-circle"></i>
               <input class="form-input" id="txt-input" type="text" placeholder="@UserName" onChange={(e)=> setUserName(e.target.value)} required />
-
-              </span>
-              <span class="input-item">
+            </span>
+            <span class="input-item">
               <i class="fa fa-key"></i>
-            
               <input class="form-input" type="password" placeholder="Password" id="pwd"  name="password" onChange={(e)=> setPhone(e.target.value)} required/>
-              </span>
-              <button className="log-in" type='submit'> Log In </button>
-             </div>
-
-             <div>
-  
-    
-           
-               <Link  className="submits sign-up defaultLink" to={`/Register`}>     Sign Up<i style={{margin:'7px'}}class="fa fa-user-plus" aria-hidden="true"/></Link>
-      
-            </div>
-           {Error}
+            </span>
+            <button className="log-in" type='submit'> Log In </button>
           </div>
-  
-</form>
-</div>
-
-        
-      
-    )
-
-    /*</div>
-      <div className='LogInPage'>
-            <form onSubmit={handleSubmit} className='logInBorder'>
-              <input className='phone_and_name' type='text' placeholder="Username" onChange={(e)=> setUserName(e.target.value)}/> 
-              <input placeholder="phone/password" className='phone_and_name' type='text' onChange={(e)=> setPhone(e.target.value)}/>  
-              <button className='submit_button' type='submit'> Login</button> 
-              <button  className='submit_button'> <Link className='defaultLink' to={`/Register`}>Register</Link></button>
-              {Error}
-               
-            </form>  
-            </div>*/
+          <div>
+            <Link  className="submits sign-up defaultLink" to={`/Register`}>     Sign Up<i style={{margin:'7px'}}class="fa fa-user-plus" aria-hidden="true"/></Link>
+          </div>
+          {Error}
+        </div>
+      </form>
+    </div>    
+  )
 }

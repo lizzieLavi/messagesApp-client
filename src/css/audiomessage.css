@@ -12,12 +12,18 @@
     background-color: #CED2D5;
 }
 
+.message_with_audio .sender
+{
+    align-items: flex-end;
+}
+
 
 .message_out audio
 {
     background-color: #90B8B8; 
 }
  .message_in audio::-webkit-media-controls-panel  {
+    -webkit-appearance:none;
   background-color: #CED2D5;
 
   border-color: #CED2D5;
@@ -29,23 +35,24 @@
   }
 
 
+  audio::-webkit-media-controls-timeline-container,
+  audio::-webkit-media-controls-current-time-display,
+  audio::-webkit-media-controls-time-remaining-display,
+  audio::-webkit-media-controls-fullscreen-button,
+  audio::-webkit-media-controls-rewind-button,
+  audio::-webkit-media-controls-return-to-realtime-button,
+  audio::-webkit-media-controls-toggle-closed-captions-button
+  {
+      display:none;
+  }
 
 
-audio::-webkit-media-controls-volume-slider:hover{
-    display:none;
-}
-
-audio::-webkit-media-controls-play-button
+.audio_and_avatar
 {
-
-    width: 34px;
-    height: 34px;
-    color: rgba(var(--icon-strong-rgb),.5);
-    color:lightblue;
+    display:flex;
+    flex-direction: row;
+    align-items: center;
 }
-
-
-
 
 .audio_and_time
 {
