@@ -121,7 +121,7 @@ export function ConversationsProvider({children })
       let ConversationsList = response.data.map((conversation) =>
       {
         let UpdatedConversation= conversation
-        if (!conversation.isGroup && conversation.Name === sessionStorage["name"])
+        if (!conversation.isGroup && conversation.Name === info.name)
           UpdatedConversation = { ...UpdatedConversation,Name: conversation.Participants[0].name,ConversationImage:conversation.Participants[0].image}
 
         if(selectedConversation)
