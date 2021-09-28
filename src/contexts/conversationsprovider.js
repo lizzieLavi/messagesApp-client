@@ -21,7 +21,7 @@ export function ConversationsProvider({children })
   const [selectedConversation, setSelectedConversation] = useState();
   const RefConversations = useRef(conversations);
   const currentConversationRef = useRef(selectedConversation);
-  const { socket, ConnectedUsers } = useSocket();
+  const {socket, ConnectedUsers} = useSocket();
   const [typingFlag,setTypingFlag] =useState('')
   const [currentConversationIsConnected,setCurrentConversationIsConnected] = useState('')
   const config = { headers: { "x-access-token": sessionStorage["config"] } };
@@ -33,37 +33,27 @@ export function ConversationsProvider({children })
 
   useEffect(()=>
   {
-
-    async function fetchData() {
-
-    if(socket.current ==null ) return;
-    socket.current.on('user-typing',({user,conversationId})=>
+    async function fetchData() 
     {
+      if(socket.current ==null ) return;
 
-        if(selectedConversation)
-        {
-          if(selectedConversation._id === conversationId)
-          {
-             setTypingFlag(user.name)
-          }
-        }
-    })
+      //when other user updates conversation information, update this user on changes
+      socket.current.on('update-conversation',async ()=>
+      {
+        setRenderFlag(true)
+      })
 
-    socket.current.on('update-conversation',async ()=>
-    {
-    
-      setRenderFlag(true)
-    
-    })
 
+    //when user was removed, remove this user from conversation
     socket.current.on('removed-user',async ()=>
     {
-    
       getConversations().then(res=> 
       {
         setConversations(res)
         if(selectedConversation)
         {
+          /*if this selected conversation dosn't exists in conversations anymore, this is the deleted user, 
+          let him know he was deleted and remove this chat from selected conversation*/
           let checkIfDeleted=res.filter(conversation=> conversation._id === selectedConversation._id)
           if(checkIfDeleted.length === 0 ) 
             setRemovedFromGroupFlag(true)
@@ -79,35 +69,42 @@ export function ConversationsProvider({children })
 
   },[selectedConversation])
 
+/*everytime a user is connected/dissconnected/ this user entered new conversation,
+ check if the current conversation user is connected or not*/
   useEffect( ()=>
   {
-    async function fetchData() {
-
-    if(selectedConversation)
+    async function fetchData() 
     {
-    if(!selectedConversation.isGroup)
-     {
-      if(ConnectedUsers.some(user=> user.userId ===selectedConversation.Participants[0].id))
+
+      if(selectedConversation)
       {
-        setCurrentConversationIsConnected('')
-      }
-      else
-      {
-        let response = await axios.get("https://messagesapp1.herokuapp.com/api/logIn/"+ selectedConversation.Participants[0].id,config)
-        setCurrentConversationIsConnected(response.data.LastSeen)
-      }
+        if(!selectedConversation.isGroup)
+        {
+         if(ConnectedUsers.some(user=> user.userId ===selectedConversation.Participants[0].id))
+        {
+          setCurrentConversationIsConnected('')
+        }
+        else
+        {
+          let response = await axios.get("https://messagesapp1.herokuapp.com/api/logIn/"+ selectedConversation.Participants[0].id,config)
+          setCurrentConversationIsConnected(response.data.LastSeen)
+        }
      }
     }
   }
 
   fetchData();
 
-  },[ConnectedUsers,setSelectedConversation])
+  },[ConnectedUsers,selectedConversation])
 
+
+  //on first render,and every time conversation updates, get new conversations from DB
   useEffect(() =>
   {
-    async function fetchData() {
-     getConversations().then(res=> setConversations(res))
+
+    async function fetchData() 
+    {
+      getConversations().then(res=> setConversations(res))
     }
 
     if(renderFlag)
@@ -118,6 +115,26 @@ export function ConversationsProvider({children })
     
   }, [renderFlag]);
 
+  //when other user is typing, and this user is on this conversation, let him know other user is typing
+  useEffect(() =>
+  {
+
+    if(socket.current ==null ) return;
+    socket.current.on('user-typing',({user,conversationId})=>
+    {
+
+      if(selectedConversation)
+      {
+        if(selectedConversation._id === conversationId)
+        {
+           setTypingFlag(user.name)
+        }
+      }
+    })
+
+  },[])
+
+  //get updated conversations from DB when needed
   async function getConversations()
   {
 
@@ -127,17 +144,20 @@ export function ConversationsProvider({children })
       let ConversationsList = response.data.map((conversation) =>
       {
         let UpdatedConversation= conversation
+
+        /*if this is a private conversation, and the name and picture saved as this user name, 
+        update the conversation to other user name and picture*/
         if (!conversation.isGroup && conversation.Name ===  sessionStorage['name'])
           UpdatedConversation = { ...UpdatedConversation,Name: conversation.Participants[0].name,ConversationImage:conversation.Participants[0].image}
 
+
+        //update the current shown on screen conversation
         if(selectedConversation)
         {
           if(selectedConversation._id === UpdatedConversation._id)
             setSelectedConversation(UpdatedConversation)
         }
 
-        
-          
          return UpdatedConversation;
 
       })
@@ -148,9 +168,7 @@ export function ConversationsProvider({children })
 
   }
 
-
-
-
+  //on search event, update shown conversations list
   async function getSearchConverastions(str)
   {
     getConversations().then(res=>
@@ -163,6 +181,7 @@ export function ConversationsProvider({children })
   }
         
 
+  //create new conversation
   async function createConversation(ids, name, image,groupFlag)
   {
 
@@ -177,7 +196,7 @@ export function ConversationsProvider({children })
       return {status:'error',message:'no participants choosen'};
     }
 
-    //check if conversation already exists and it's not a group
+    //check if conversation already exists and it's not a group.
     let ConversationExists = null;
     if (ids.length === 1 && !isGroup) {
       ConversationExists = conversations.find(
@@ -185,6 +204,8 @@ export function ConversationsProvider({children })
       );
     }
 
+
+    //if already exists, show the existing one
     if (ConversationExists) setSelectedConversation(ConversationExists);
 
     //create new conversation
@@ -211,7 +232,7 @@ export function ConversationsProvider({children })
 
       let createdDate=''
 
-      //if group
+      //if group add creation date,add creation message and upload group picture
       if (isGroup) 
       {
         let parts = new Intl.DateTimeFormat('en', {
@@ -285,6 +306,8 @@ export function ConversationsProvider({children })
     }
   }
 
+
+  //update existing conversation details when changed 
   async function UpdateConversation(updatedConversation)
   {
 
@@ -323,6 +346,8 @@ export function ConversationsProvider({children })
           setSelectedConversation()
         }
 
+
+        //if user where removed by admin, send to user deleted case, so server let him know he was deleted
         if(updatedConversation.LastMessage.message.includes('removed'))
           socket.current.emit('user-deleted',selectedConversation)
         else
@@ -335,11 +360,17 @@ export function ConversationsProvider({children })
   }
 
 
+
+  //add message got from other user to conversation
   const addMessageToConversation = useCallback(async ({ UpdatedConv }) =>
   {
+
+    //voice alert
     audio.play()
 
     let ConversationExists = false;
+
+    //use refConversations to void infinite loop
     let newListOfConversations = RefConversations.current.map((conversation) =>
     {
       if (conversation._id === UpdatedConv._id) 
@@ -361,7 +392,7 @@ export function ConversationsProvider({children })
       else return conversation;
     });
 
-
+   // if this is a new conversation first message, update user conversations
     if (!ConversationExists) 
     {
       if (!UpdatedConv.isGroup)
@@ -380,6 +411,8 @@ export function ConversationsProvider({children })
     else setConversations(newListOfConversations);
   },[setConversations]);
 
+
+  //handle messages socket
   useEffect(() => 
   {
 
@@ -394,6 +427,8 @@ export function ConversationsProvider({children })
   },[conversations, selectedConversation]);
 
 
+
+  //update the message sender conversations
   const updateSenderConversation = (AddMessage) => 
   {
 
@@ -420,6 +455,8 @@ export function ConversationsProvider({children })
   };
 
 
+
+  //send new message to chat users
   function sendMessage(text,imageFlag,imageURL,recordURL) {
 
 

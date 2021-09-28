@@ -17,7 +17,7 @@ export function SocketProvider({ userId, children })
   useEffect(()=>
   {
     async function fetchData() {
-    socket.current = io("wss://messagesapp1.herokuapp.com:443/");
+       socket.current = io("wss://messagesapp1.herokuapp.com:443/");
     }
 
     fetchData()
