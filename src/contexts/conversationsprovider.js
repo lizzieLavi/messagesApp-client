@@ -28,6 +28,7 @@ export function ConversationsProvider({children })
   const [showDetails,setShowDetails] =useState(false)
   const [removedFromGroupFlag,setRemovedFromGroupFlag] = useState(false)
   const audio = new Audio('https://res.cloudinary.com/dsrgpqnyv/video/upload/v1630680168/juntos-607_qsfc7i.mp3');
+  const [renderFlag,setRenderFlag]=useState(true)
 
 
   useEffect(()=>
@@ -51,7 +52,7 @@ export function ConversationsProvider({children })
     socket.current.on('update-conversation',async ()=>
     {
     
-      getConversations().then(res=> setConversations(res))
+      setRenderFlag(true)
     
     })
 
@@ -108,9 +109,14 @@ export function ConversationsProvider({children })
     async function fetchData() {
      getConversations().then(res=> setConversations(res))
     }
-    fetchData();
+
+    if(renderFlag)
+    {
+      setRenderFlag(false)
+      fetchData();
+    }
     
-  }, []);
+  }, [renderFlag]);
 
   async function getConversations()
   {
@@ -121,15 +127,16 @@ export function ConversationsProvider({children })
       let ConversationsList = response.data.map((conversation) =>
       {
         let UpdatedConversation= conversation
-        if (!conversation.isGroup && conversation.Name === info.name)
+        if (!conversation.isGroup && conversation.Name ===  sessionStorage['name'])
           UpdatedConversation = { ...UpdatedConversation,Name: conversation.Participants[0].name,ConversationImage:conversation.Participants[0].image}
 
         if(selectedConversation)
         {
           if(selectedConversation._id === UpdatedConversation._id)
             setSelectedConversation(UpdatedConversation)
-
         }
+
+        
           
          return UpdatedConversation;
 
@@ -282,6 +289,8 @@ export function ConversationsProvider({children })
   {
 
     let updateDBConv={...updatedConversation}
+
+    //if user left the group, dont add him to DB
     if(!(updatedConversation.LastMessage.message.includes('left')))
     {
       let addCurrentParticipant= {id: info.id,phone: info.phone,name: info.name,image: info.imageName,}
@@ -290,7 +299,6 @@ export function ConversationsProvider({children })
     }
 
     delete updateDBConv._id
-
 
     try
     {

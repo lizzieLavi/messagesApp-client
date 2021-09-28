@@ -2,6 +2,8 @@ import React,{useState} from 'react'
 import '../css/profiledetails.css'
 import axios from 'axios';
 import {useUser } from '../contexts/userprovider';
+import { useConversations } from '../contexts/conversationsprovider';
+import { useSocket } from "../contexts/socketprovider";
 import {Avatar, IconButton,makeStyles } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
@@ -9,6 +11,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import CheckIcon from '@material-ui/icons/Check';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import Picker from 'emoji-picker-react';
+
 
 const useStyles = makeStyles({
     root: {
@@ -21,6 +24,8 @@ const useStyles = makeStyles({
 function ProfileDetails({backToConversations}) 
 {
   const {info,contacts,setInfo,config} = useUser()
+  const {conversations,setConversations} = useConversations()
+  const { socket} = useSocket();
   const [previewImage,setPreviewImage]=useState(info.imageName)
   const [editNameFlag,setEditNameFlag] = useState(false)
   const [editStatusFlag,setEditStatusFlag] = useState(false)
@@ -84,12 +89,45 @@ function ProfileDetails({backToConversations})
     {
       let response = await axios.put("https://messagesapp1.herokuapp.com/api/logIn/" + sessionStorage['id'],obj,config)
       if(response.data==='Updated')
+      {
         setInfo(obj)
+
+        let updateConv=[]
+
+        conversations.map(async (conversation)=>
+        {
+          let updateCon = ''
+          if(conversation.Name === info.name)
+          {
+            updateCon = {...conversation,Name:Text}
+          }
+          else updateCon = {...conversation}
+
+          updateConv.push(updateCon)
+
+          obj={...obj,id:sessionStorage['id']}
+          let newParticipants=[...conversation.Participants,obj]
+          updateCon={...updateCon,Participants:newParticipants}
+          delete updateCon._id
+
+          try
+          {
+            await axios.put("https://messagesapp1.herokuapp.com/api/conversations/"+ conversation._id,updateCon,config)
+          }catch(err){console.log(err)}
+
+          socket.current.emit('conversation-changed',conversation)
+
+
+        })
+
+        setConversations(updateConv)
+
+      }
 
     }catch(err){console.log(err)}
 
-      setEmojiFlag(false)
-      setEditNameFlag(false)
+    setEmojiFlag(false)
+    setEditNameFlag(false)
 
   }
 
