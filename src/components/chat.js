@@ -24,6 +24,7 @@ export default function Chat()
     let returnValue = ''
     if(currentConversationIsConnected === '')
     {
+
       if(typingFlag !== '')
       {
         returnValue = <div className='lastSeen'> typing...</div>

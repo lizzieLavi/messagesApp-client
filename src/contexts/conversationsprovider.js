@@ -122,7 +122,6 @@ export function ConversationsProvider({children })
     if(socket.current ==null ) return;
     socket.current.on('user-typing',({user,conversationId})=>
     {
-
       if(selectedConversation)
       {
         if(selectedConversation._id === conversationId)
@@ -132,7 +131,7 @@ export function ConversationsProvider({children })
       }
     })
 
-  },[])
+  },[selectedConversation])
 
   //get updated conversations from DB when needed
   async function getConversations()
