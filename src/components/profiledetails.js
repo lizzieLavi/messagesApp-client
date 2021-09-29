@@ -66,7 +66,7 @@ function ProfileDetails({backToConversations})
       picturePath =response.data.url
       
       let user = {name:info.name,phone: info.phone,imageName:picturePath,contacts:contacts,LastSeen:info.LastSeen,Status:info.Status,color:info.color}
-      let userToContacts={id:sessionStorage['id'],name: Text,phone: info.phone,imageName:picturePath,Status:info.Status,color:info.color}
+      let userToContacts={id:sessionStorage['id'],name:info.name,phone: info.phone,imageName:picturePath,Status:info.Status,color:info.color}
       updateConversationParticipant(userToContacts,'image',picturePath)
       updateInformation(user,userToContacts)
 
