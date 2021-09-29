@@ -148,7 +148,7 @@ export function ConversationsProvider({children })
 
         /*if this is a private conversation, and the name and picture saved as this user name, 
         update the conversation to other user name and picture*/
-        if (!conversation.isGroup && conversation.Name ===  info.name)
+        if (!conversation.isGroup && conversation.Name ===  sessionStorage['name'])
           UpdatedConversation = { ...UpdatedConversation,Name: conversation.Participants[0].name,ConversationImage:conversation.Participants[0].imageName}
 
 
