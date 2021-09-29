@@ -7,7 +7,7 @@ import '../css/conversations.css'
 export default function Contacts({newConversationCallback,openModalCallback}) 
 {
 
-  const {info,contacts} = useUser()
+  const {contacts} = useUser()
   const {createConversation} = useConversations()
 
   function startConversation({id,name,image}) 
@@ -33,7 +33,10 @@ export default function Contacts({newConversationCallback,openModalCallback})
              <Avatar src={contact.imageName}/>
               <div className='chatInfo'>
                 <h2 className='user_name'>{contact.name} </h2>
-                <span className='user_status'> {(info.Status).slice(0,25)}... </span>
+                <span className='user_status'> {contact.Status.slice(0,25)}
+                {contact.Status.length > 25? '...' :''}
+                </span>
+
               </div>
             </div> 
           )

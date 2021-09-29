@@ -19,6 +19,12 @@ function Register(props)
   const [error,setError] =useState('')
   const [previewImage,setPreviewImage]=useState()
 
+  
+  function getColor()
+  {
+    return ('#'+(Math.random()*0xFFFFFF<<0).toString(16))
+  }
+
   //get user information and token from DB
   async function handleSubmit(e)
   {
@@ -41,11 +47,14 @@ function Register(props)
       }catch(err){console.log(err)}
 
     }
-        
-    let obj = {name:name,phone:phone,imageName:picturePath,contacts:[],LastSeen:'last seen at...',Status:"hello,i'm using Message-App!"}
+
+  
+    let randomColor=getColor()  
+    let obj = {name:name,phone:phone,imageName:picturePath,contacts:[],LastSeen:'last seen at...',Status:"hello,i'm using Message-App!",color:randomColor}
+
 
     try{
-         const response = await axios.post("https://messagesapp1.herokuapp.com/api/logIn/Register",obj)
+         const response = await axios.post("https://messagesapp1.herokuapp.com/logIn/Register",obj)
          if(response.data.status === 'error')
          {
             setError(response.data.message)
@@ -84,7 +93,7 @@ function Register(props)
             <div className="field-set">
              {previewImage?
                <div className='change_group_image'> 
-                    <Avatar  src={previewImage} style={{height: '110px', width: '110px' ,backgroundColor:'gray' ,margin:'15px',marginTop:'30px'}}> </Avatar>
+                    <Avatar  src={previewImage} style={{height: '140px', width: '140px' ,backgroundColor:'gray' ,margin:'15px',marginTop:'30px'}}> </Avatar>
                     <div className='change_image_on_hover' style={{display:'flex',flexDirection:'column',alignItems:'center',position:'absolute',zIndex:'1',color:'white',curser:'pointer'}}>
                       <AddAPhotoIcon  style={{height: '30px', width: '30px' ,color:'white'}}/>
                       <input accept="image/*" id="file" type="file" name="file" onChange={handleFileUpload}/>

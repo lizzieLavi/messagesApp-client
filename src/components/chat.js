@@ -88,7 +88,8 @@ export default function Chat()
   const chatSide=
     <div>
       <div className='chat_header' onClick={()=>setShowDetails(true)}>
-        <Avatar src={selectedConversation.ConversationImage}/>
+        {selectedConversation.isGroup?
+        <Avatar src={selectedConversation.ConversationImage}/>:<Avatar src={selectedConversation.Participants[0].imageName}/>}
         <div className='chat_header_info'>
           <h2 style={{fontSize:'20px'}}> {selectedConversation.Name} </h2> 
           {selectedConversation.isGroup?  groupheader() : privateConversationHeader()}

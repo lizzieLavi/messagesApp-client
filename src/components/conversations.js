@@ -23,10 +23,13 @@ export default function Conversations()
         {
           return  (   
             <div key={index}  onClick={()=>handleSelectedConversation(conversation)}  className='ChatsListItem'>
-              <Avatar src={conversation.ConversationImage}/>
+              {console.log(conversation)}
+              {conversation.isGroup?
+              <Avatar src={conversation.ConversationImage}/>:<Avatar src={conversation.Participants[0].imageName}/>}
               <div className='chatInfo'>
                 <h2 className='user_name'>{conversation.Name}</h2>
-                <span className='user_status'> {(conversation.LastMessage.message).slice(0,28)}... </span>
+                <span className='user_status'> {(conversation.LastMessage.message).slice(0,43)}
+                {conversation.LastMessage.message.length > 43? '...' :''} </span>
               </div>
             
             </div>

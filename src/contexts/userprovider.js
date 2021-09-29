@@ -1,7 +1,9 @@
 
 import React, { useState ,useEffect, useContext} from 'react'
 import axios from 'axios'
+import { useSocket } from "./socketprovider";
 const UserContext = React.createContext()
+
 
 export function useUser() 
 {
@@ -13,7 +15,8 @@ export  function UserProvider({ children })
   const [contacts, setContacts] = useState([])
   const [info,setInfo] =useState({})
   const config= {'headers': {'x-access-token':sessionStorage['config']}}
-
+  const {socket} = useSocket();
+  const [updateFlag,setUpdateFlag]=useState(true)
 
   
   useEffect( () =>
@@ -23,14 +26,38 @@ export  function UserProvider({ children })
       getContacts().then(res=> setContacts(res))
     }
 
-    fetchData();
+    if(updateFlag)
+    {
+      fetchData();
+      setUpdateFlag(false)
+    }
 
-   },[setInfo])
+   },[updateFlag])
+
+   useEffect(()=>
+   {
+     async function fetchData() 
+     {
+       if(socket.current ==null ) return;
+
+ 
+       //when other user updates contact information, update this user on changes
+       socket.current.on('update-contact',async ()=>
+       {
+         setUpdateFlag(true)
+       })
+ 
+   }
+ 
+   fetchData();
+ 
+   },[updateFlag])
 
    async function getContacts()
    {
       const response = await axios.get("https://messagesapp1.herokuapp.com/api/logIn/"+sessionStorage['id'],config);
-      setInfo({id:response.data._id,name:response.data.name,phone:response.data.phone,imageName:response.data.imageName,LastSeen:response.data.LastSeen,Status:response.data.Status})
+      setInfo({id:response.data._id,name:response.data.name,phone:response.data.phone,imageName:response.data.imageName,LastSeen:response.data.LastSeen,Status:response.data.Status,color:response.data.color})
+      console.log(response.data.contacts)
       return(response.data.contacts)
 
    }
@@ -69,7 +96,7 @@ export  function UserProvider({ children })
 
       if(response.data !== 'no such user')
       {
-        const contact = {id:response.data._id,phone:response.data.phone,name:response.data.name,imageName:response.data.imageName,Status:response.data.Status}
+        const contact = {id:response.data._id,phone:response.data.phone,name:response.data.name,imageName:response.data.imageName,Status:response.data.Status,color:response.data.color}
         let newContacts = [...contacts,contact]
         setContacts(newContacts)
         let UpdatedUser={...info,contacts:newContacts}
@@ -83,13 +110,27 @@ export  function UserProvider({ children })
     }catch(err){console.log(err)}
 
     return {status:'ok'}
-    
+
+  }
+
+  const updateInformation = async(user,userToContacts) =>
+  {
+    try
+    {
+      let response = await axios.put("https://messagesapp1.herokuapp.com/api/logIn/" + sessionStorage['id'],user,config)
+      if(response.data.status==='Updated')
+      {
+        setInfo(user)
+      }
+    }catch(err){console.log(err)}
+
+     socket.current.emit('contact-changed',userToContacts)
   }
 
 
 
   return (
-    <UserContext.Provider value={{setContacts,setInfo,info,config,contacts,createContact,getSearchContacts }}>
+    <UserContext.Provider value={{setContacts,setInfo,info,config,contacts,createContact,getSearchContacts,updateInformation }}>
       {children}
     </UserContext.Provider>
   )

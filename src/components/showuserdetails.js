@@ -14,7 +14,7 @@ function ShowUserDetails({privateConversationHeader}) {
 
         <div className='user_info'>
            <div onClick={()=>setPictureDialogOpen(true)}>
-               <Avatar  src={selectedConversation.ConversationImage} style={{margin:'20px',height:'150px',width:'150px'}}/>
+               <Avatar  src={selectedConversation.Participants[0].imageName} style={{margin:'20px',height:'150px',width:'150px'}}/>
            </div>
 
            <Dialog className='open_picture_dialog' onClose={()=> setPictureDialogOpen(false)}  open={pictureDialogOpen}>

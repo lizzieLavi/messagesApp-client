@@ -36,10 +36,10 @@ export function ConversationsProvider({children })
     async function fetchData() 
     {
       if(socket.current ==null ) return;
-
       //when other user updates conversation information, update this user on changes
       socket.current.on('update-conversation',async ()=>
       {
+        console.log('here')
         setRenderFlag(true)
       })
 
@@ -67,7 +67,7 @@ export function ConversationsProvider({children })
 
   fetchData();
 
-  },[selectedConversation])
+  },[selectedConversation,renderFlag])
 
 /*everytime a user is connected/dissconnected/ this user entered new conversation,
  check if the current conversation user is connected or not*/
@@ -133,6 +133,8 @@ export function ConversationsProvider({children })
 
   },[selectedConversation])
 
+
+
   //get updated conversations from DB when needed
   async function getConversations()
   {
@@ -146,8 +148,8 @@ export function ConversationsProvider({children })
 
         /*if this is a private conversation, and the name and picture saved as this user name, 
         update the conversation to other user name and picture*/
-        if (!conversation.isGroup && conversation.Name ===  sessionStorage['name'])
-          UpdatedConversation = { ...UpdatedConversation,Name: conversation.Participants[0].name,ConversationImage:conversation.Participants[0].image}
+        if (!conversation.isGroup && conversation.Name ===  info.name)
+          UpdatedConversation = { ...UpdatedConversation,Name: conversation.Participants[0].name,ConversationImage:conversation.Participants[0].imageName}
 
 
         //update the current shown on screen conversation
@@ -218,6 +220,8 @@ export function ConversationsProvider({children })
         );
         return addContactToConversation[0];
       });
+
+      console.log(participants)
 
 
       //add creator to participants
@@ -315,7 +319,7 @@ export function ConversationsProvider({children })
     //if user left the group, dont add him to DB
     if(!(updatedConversation.LastMessage.message.includes('left')))
     {
-      let addCurrentParticipant= {id: info.id,phone: info.phone,name: info.name,image: info.imageName,}
+      let addCurrentParticipant= {id: info.id,phone: info.phone,name: info.name,imageName: info.imageName,Status:info.Status,color:info.color}
       let participants=[...updatedConversation.Participants,addCurrentParticipant]
       updateDBConv={...updateDBConv,Participants:participants}
     }
@@ -358,6 +362,48 @@ export function ConversationsProvider({children })
     }catch(err){console.log(err)}
   }
 
+  function updateConversationParticipant(userUpdatedInfo,infoFlag,information)
+  {
+
+    let updateConv=[]
+    conversations.map(async (conversation)=>
+    {
+      let updateCon = ''
+
+      if(conversation.Name === userUpdatedInfo.info && conversation.isGroup==false)
+      {
+        if(infoFlag === 'name')
+        {
+          updateCon = {...conversation,Name:information}
+        }
+
+        else if(infoFlag=='image')
+            updateCon = {...conversation,ConversationImage:information}
+
+
+    }
+
+      else updateCon = {...conversation}
+
+      updateConv.push(updateCon)
+
+      let newParticipants=[...conversation.Participants,userUpdatedInfo]
+      updateCon={...updateCon,Participants:newParticipants}
+      delete updateCon._id
+
+      try
+      {
+        await axios.put("https://messagesapp1.herokuapp.com/api/conversations/"+ conversation._id,updateCon,config)
+
+      }catch(err){console.log(err)}
+
+
+      socket.current.emit('conversation-changed',updateCon)
+      setConversations(updateConv)
+
+    })
+
+  }
 
 
   //add message got from other user to conversation
@@ -481,7 +527,7 @@ export function ConversationsProvider({children })
     if(recordURL!=null)
        recordFlag=true
     
-    let CurrentMessage = { id: info.id, name: info.name, message: text  ,timeSent: time ,containsImage: imageFlag,containsRecord:recordFlag,recordURL:recordURL};
+    let CurrentMessage = { id: info.id, name: info.name,color:info.color, message: text  ,timeSent: time ,containsImage: imageFlag,containsRecord:recordFlag,recordURL:recordURL};
     if(imageFlag ===true)
        CurrentMessage= {...CurrentMessage,imageURL:imageURL}
     
@@ -490,7 +536,7 @@ export function ConversationsProvider({children })
       id: info.id,
       phone: info.phone,
       name: info.name,
-      image: info.imageName,
+      imageName: info.imageName,
     };
 
     let AddMessage = 
@@ -526,7 +572,8 @@ export function ConversationsProvider({children })
         setShowDetails,
         UpdateConversation,
         removedFromGroupFlag,
-        setRemovedFromGroupFlag
+        setRemovedFromGroupFlag,
+        updateConversationParticipant
       
       }}
     >

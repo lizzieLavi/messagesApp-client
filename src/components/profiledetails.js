@@ -3,7 +3,6 @@ import '../css/profiledetails.css'
 import axios from 'axios';
 import {useUser } from '../contexts/userprovider';
 import { useConversations } from '../contexts/conversationsprovider';
-import { useSocket } from "../contexts/socketprovider";
 import {Avatar, IconButton,makeStyles } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
@@ -23,9 +22,8 @@ const useStyles = makeStyles({
 
 function ProfileDetails({backToConversations}) 
 {
-  const {info,contacts,setInfo,config} = useUser()
-  const {conversations,setConversations} = useConversations()
-  const { socket} = useSocket();
+  const {info,contacts,updateInformation} = useUser()
+  const {updateConversationParticipant} = useConversations()
   const [previewImage,setPreviewImage]=useState(info.imageName)
   const [editNameFlag,setEditNameFlag] = useState(false)
   const [editStatusFlag,setEditStatusFlag] = useState(false)
@@ -43,13 +41,14 @@ function ProfileDetails({backToConversations})
   };
 
 
-  //add emoji to status
+  //add emoji to status 
   const onStatusEmojiClick = (event, emojiObject) => 
   {
     setStatus(prevStatus => prevStatus + emojiObject.emoji)
   };
 
-  //change profile picture  
+
+  //change profile picture  and update users on real time
   async function handleFileUpload(e)
   {
 
@@ -62,91 +61,51 @@ function ProfileDetails({backToConversations})
        
     try
     {
+
       let response = await axios.post("https://api.cloudinary.com/v1_1/dsrgpqnyv/image/upload",data)
       picturePath =response.data.url
+      
+      let user = {name:info.name,phone: info.phone,imageName:picturePath,contacts:contacts,LastSeen:info.LastSeen,Status:info.Status,color:info.color}
+      let userToContacts={id:sessionStorage['id'],name: Text,phone: info.phone,imageName:picturePath,Status:info.Status,color:info.color}
+      updateConversationParticipant(userToContacts,'image',picturePath)
+      updateInformation(user,userToContacts)
 
     }catch(err){console.log(err)}
 
-    let obj = {name: info.name,phone: info.phone,imageName:picturePath,contacts:contacts,LastSeen:info.lastSeen,Status:info.Status}
-
-    try
-    {
-      let response = await axios.put("https://messagesapp1.herokuapp.com/api/logIn/" + sessionStorage['id'],obj,config)
-
-      if(response.data==='Updated')
-        setInfo(obj)
-
-    }catch(err){console.log(err)}
-
-      setPreviewImage(window.URL.createObjectURL(e.target.files[0]))
+    setPreviewImage(window.URL.createObjectURL(e.target.files[0]))
 
   }
 
+
+   //change user nickname  and update users on real time
   async function changeProfileName()
   {
-    let obj = {name: Text,phone: info.phone,imageName:info.imageName,contacts:contacts,LastSeen:info.LastSeen,Status:info.Status}
-    try
-    {
-      let response = await axios.put("https://messagesapp1.herokuapp.com/api/logIn/" + sessionStorage['id'],obj,config)
-      if(response.data==='Updated')
-      {
-        setInfo(obj)
+    let user = {name: Text,phone: info.phone,imageName:info.imageName,contacts:contacts,LastSeen:info.LastSeen,Status:info.Status,color:info.color}
+    let userToContacts={id:sessionStorage['id'],name: Text,phone: info.phone,imageName:info.imageName,Status:info.Status}
 
-        let updateConv=[]
-
-        conversations.map(async (conversation)=>
-        {
-          let updateCon = ''
-          if(conversation.Name === info.name)
-          {
-            updateCon = {...conversation,Name:Text}
-          }
-          else updateCon = {...conversation}
-
-          updateConv.push(updateCon)
-
-          obj={...obj,id:sessionStorage['id']}
-          let newParticipants=[...conversation.Participants,obj]
-          updateCon={...updateCon,Participants:newParticipants}
-          delete updateCon._id
-
-          try
-          {
-            await axios.put("https://messagesapp1.herokuapp.com/api/conversations/"+ conversation._id,updateCon,config)
-          }catch(err){console.log(err)}
-
-          socket.current.emit('conversation-changed',conversation)
-
-
-        })
-
-        setConversations(updateConv)
-
-      }
-
-    }catch(err){console.log(err)}
-
+    updateConversationParticipant(userToContacts,'name',Text)
+    updateInformation(user,userToContacts)
     setEmojiFlag(false)
     setEditNameFlag(false)
 
   }
 
+
+   //change status  and update users on real time
   async function changeProfileStatus()
   {
-    let obj = {name:info.name,phone: info.phone,imageName:info.imageName,contacts:contacts,LastSeen:info.LastSeen,Status:Status}
-    try
-    {
-      let response = await axios.put("https://messagesapp1.herokuapp.com/api/logIn/" + sessionStorage['id'],obj,config)
 
-      if(response.data==='Updated')
-        setInfo(obj)
+    let user = {name:info.name,phone: info.phone,imageName:info.imageName,contacts:contacts,LastSeen:info.LastSeen,Status:Status,color:info.color}
+    let userToContacts={id:sessionStorage['id'],name:info.name,phone: info.phone,imageName:info.imageName,Status:Status}
 
-    }catch(err){console.log(err)}
-
+    updateConversationParticipant(userToContacts,'status',Status)
+    updateInformation(user,userToContacts)
     setStatusEmojiFlag(false)
     setEditStatusFlag(false)
 
   }
+
+
 
     return (
         <div className='show_details'>
