@@ -54,7 +54,7 @@ function Register(props)
 
 
     try{
-         const response = await axios.post("https://messagesapp1.herokuapp.com/logIn/Register",obj)
+         const response = await axios.post("https://messagesapp1.herokuapp.com/api/logIn/Register",obj)
          if(response.data.status === 'error')
          {
             setError(response.data.message)
