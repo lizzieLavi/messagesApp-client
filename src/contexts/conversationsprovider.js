@@ -29,19 +29,22 @@ export function ConversationsProvider({children })
   const [removedFromGroupFlag,setRemovedFromGroupFlag] = useState(false)
   const audio = new Audio('https://res.cloudinary.com/dsrgpqnyv/video/upload/v1630680168/juntos-607_qsfc7i.mp3');
   const [renderFlag,setRenderFlag]=useState(true)
+ 
 
+  const updateFunction=()=>
+  {
+    setRenderFlag(true)
+  }
 
   useEffect(()=>
   {
     async function fetchData() 
     {
+
       if(socket.current ==null ) return;
       //when other user updates conversation information, update this user on changes
-      socket.current.on('update-conversation',async ()=>
-      {
-        console.log('here')
-        setRenderFlag(true)
-      })
+      socket.current.on('update-conversation',updateFunction)
+   
 
 
     //when user was removed, remove this user from conversation
@@ -63,11 +66,16 @@ export function ConversationsProvider({children })
       })
     
     })
+    
+    return () =>{
+    socket.current.off('update-conversation',updateFunction)
+    socket.current.off('remove-conversation')}
+
   }
 
   fetchData();
 
-  },[selectedConversation,renderFlag])
+  },[])
 
 /*everytime a user is connected/dissconnected/ this user entered new conversation,
  check if the current conversation user is connected or not*/
@@ -109,8 +117,9 @@ export function ConversationsProvider({children })
 
     if(renderFlag)
     {
-      setRenderFlag(false)
+      
       fetchData();
+      setRenderFlag(false)
     }
     
   }, [renderFlag]);
@@ -221,7 +230,6 @@ export function ConversationsProvider({children })
         return addContactToConversation[0];
       });
 
-      console.log(participants)
 
 
       //add creator to participants
@@ -387,17 +395,18 @@ export function ConversationsProvider({children })
 
       updateConv.push(updateCon)
 
+
       let newParticipants=[...conversation.Participants,userUpdatedInfo]
-      updateCon={...updateCon,Participants:newParticipants}
-      delete updateCon._id
+      let tempCon={...updateCon,Participants:newParticipants}
+      delete tempCon._id
 
       try
       {
-        await axios.put("https://messagesapp1.herokuapp.com/api/conversations/"+ conversation._id,updateCon,config)
+        await axios.put("https://messagesapp1.herokuapp.com/api/conversations/"+ conversation._id,tempCon,config)
 
       }catch(err){console.log(err)}
 
-
+      
       socket.current.emit('conversation-changed',updateCon)
       setConversations(updateConv)
 

@@ -40,7 +40,6 @@ export  function UserProvider({ children })
      {
        if(socket.current ==null ) return;
 
- 
        //when other user updates contact information, update this user on changes
        socket.current.on('update-contact',async ()=>
        {
@@ -51,7 +50,7 @@ export  function UserProvider({ children })
  
    fetchData();
  
-   },[updateFlag])
+   },[])
 
    async function getContacts()
    {
@@ -120,7 +119,8 @@ export  function UserProvider({ children })
       let response = await axios.put("https://messagesapp1.herokuapp.com/api/logIn/" + sessionStorage['id'],user,config)
       if(response.data.status==='Updated')
       {
-        setInfo(user)
+        setInfo({...user,id:sessionStorage['id']})
+        
       }
     }catch(err){console.log(err)}
 

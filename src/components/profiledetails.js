@@ -83,6 +83,8 @@ function ProfileDetails({backToConversations})
     let user = {name: Text,phone: info.phone,imageName:info.imageName,contacts:contacts,LastSeen:info.LastSeen,Status:info.Status,color:info.color}
     let userToContacts={id:sessionStorage['id'],name: Text,phone: info.phone,imageName:info.imageName,Status:info.Status}
 
+    sessionStorage['name' ] = Text
+
     updateConversationParticipant(userToContacts,'name',Text)
     updateInformation(user,userToContacts)
     setEmojiFlag(false)
