@@ -40,7 +40,6 @@ export function ConversationsProvider({children })
   {
     async function fetchData() 
     {
-
       if(socket.current ==null ) return;
       //when other user updates conversation information, update this user on changes
       socket.current.on('update-conversation',updateFunction)
@@ -66,7 +65,6 @@ export function ConversationsProvider({children })
       })
     
     })
-    
     return () =>{
     socket.current.off('update-conversation',updateFunction)
     socket.current.off('remove-conversation')}
@@ -75,7 +73,7 @@ export function ConversationsProvider({children })
 
   fetchData();
 
-  },[])
+  },[conversations])
 
 /*everytime a user is connected/dissconnected/ this user entered new conversation,
  check if the current conversation user is connected or not*/
